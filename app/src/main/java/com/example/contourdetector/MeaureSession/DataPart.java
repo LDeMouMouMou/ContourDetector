@@ -179,8 +179,8 @@ public class DataPart extends AppCompatActivity implements Button.OnClickListene
         showBiasChartButton.setTextColor(isOriginal? getResources().getColor(R.color.colorBlack):
                 getResources().getColor(R.color.colorLightGray));
         // 接下来根据isOriginal刷新图线显示的数据
-        List<Float> tempX = new ArrayList<>();
-        List<Float> tempY = new ArrayList<>();
+        List<Float> tempX;
+        List<Float> tempY;
         List<Line> lines = new ArrayList<>();
         if (isOriginal) {
             tempX = parameterServer.getDataListOfTypeAfterProcessed("listX");
