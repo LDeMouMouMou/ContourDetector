@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <include android:id="@+id/scanner_headtitle"
+        layout="@layout/headtitle_universal" />
+
+    <lecho.lib.hellocharts.view.LineChartView
+        android:id="@+id/lineChartView"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/lineChartViewHeight"
+        android:layout_above="@+id/scanner_progressBar"
+        />
+
+    <ProgressBar
+        android:id="@+id/scanner_progressBar"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="100"
+        android:layout_above="@+id/scanner_progressText"/>
+
+    <TextView
+        android:id="@+id/scanner_progressText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/bottomControlButton"
+        android:text="@string/scannerReady"
+        android:textAlignment="center"
+        android:textSize="18sp"
+        android:textColor="@color/colorBlack" />
+
+    <LinearLayout
+        android:id="@+id/bottomControlButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/scanner_startbutton"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="18sp"
+            android:text="@string/scannerStart"
+            android:textColor="@color/colorBlack"/>
+
+        <TextView
+            android:layout_width="1dp"
+            android:layout_height="wrap_content"
+            android:background="@color/colorBlack"
+            android:textSize="20sp"/>
+
+        <Button
+            android:id="@+id/scanner_stopbutton"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="18sp"
+            android:text="@string/scannerStop"
+            android:textColor="@color/colorBlack"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

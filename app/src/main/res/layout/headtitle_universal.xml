@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="45dp"
+    android:orientation="horizontal"
+    android:background="@color/colorMainBlue">
+
+    <Button
+        android:id="@+id/backButton"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_gravity="center"
+        android:background="@drawable/button_arrowleft"
+        android:visibility="invisible"
+        android:layout_marginStart="-150dp" />
+
+    <Button
+        android:id="@+id/goButton"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_gravity="center"
+        android:background="@drawable/button_arrowright"
+        android:visibility="invisible"
+        android:layout_marginStart="150dp" />
+
+    <TextView
+        android:id="@+id/headtitleText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:typeface="monospace"
+        android:textColor="@color/colorWhite"
+        android:textSize="20sp"
+        android:textAlignment="center"
+        android:text="@string/homepageTitle"/>
+
+</FrameLayout>

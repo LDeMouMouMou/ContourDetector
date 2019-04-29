@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/white_roundcorner">
+
+    <Button
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:enabled="false"
+        android:textSize="18sp"
+        android:textColor="@color/colorBlack"
+        android:text="@string/dataSearchSet" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <Button
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:enabled="false"
+            android:text="@string/condition_concaveBias"
+            android:textSize="18sp"
+            android:textColor="@color/colorBlack" />
+
+        <EditText
+            android:id="@+id/condition_concaveInput"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:hint="@string/condition_intputHint"
+            android:textAlignment="center"
+            android:textSize="16sp"
+            android:inputType="numberDecimal"
+            android:digits=".0123456789"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <Button
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:enabled="false"
+            android:text="@string/condition_convexBias"
+            android:textSize="18sp"
+            android:textColor="@color/colorBlack" />
+
+        <EditText
+            android:id="@+id/condition_convexInput"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:hint="@string/condition_intputHint"
+            android:textAlignment="center"
+            android:textSize="16sp"
+            android:inputType="numberDecimal"
+            android:digits=".0123456789"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <Button
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:enabled="false"
+            android:text="@string/condition_concaveMax"
+            android:textSize="18sp"
+            android:textColor="@color/colorBlack" />
+
+        <EditText
+            android:id="@+id/condition_concaveMax"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:hint="@string/condition_intputHint"
+            android:textAlignment="center"
+            android:textSize="16sp"
+            android:inputType="numberDecimal"
+            android:digits=".0123456789"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <Button
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:enabled="false"
+            android:text="@string/condition_convexMax"
+            android:textSize="18sp"
+            android:textColor="@color/colorBlack" />
+
+        <EditText
+            android:id="@+id/condition_convexMax"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:hint="@string/condition_intputHint"
+            android:textAlignment="center"
+            android:textSize="16sp"
+            android:inputType="numberDecimal"
+            android:digits=".0123456789"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/condition_confirm"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/condition_confirm"
+            android:textSize="18sp"
+            android:textColor="@color/colorBlack" />
+
+        <TextView
+            android:layout_width="1dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@color/colorBlack"
+            android:textSize="20sp"/>
+
+        <Button
+            android:id="@+id/condition_cancel"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/condition_cancel"
+            android:textSize="18sp"
+            android:textColor="@color/colorBlack" />
+
+    </LinearLayout>
+
+</LinearLayout>

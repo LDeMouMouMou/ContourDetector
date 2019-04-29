@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="homepagebuttons">50dp</dimen>
+    <dimen name="fragmentHeight">240dp</dimen>
+    <dimen name="lineChartViewHeight">350dp</dimen>
+</resources>

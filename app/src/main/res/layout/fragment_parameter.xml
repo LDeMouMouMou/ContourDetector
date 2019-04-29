@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/fragmentHeight"
+    android:orientation="vertical"
+    android:background="@color/colorWhite" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginStart="@dimen/dp_10"
+        android:layout_marginEnd="@dimen/dp_10"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/parameter_insideRadiusButton"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="18sp"
+            android:text="@string/insideRadiusText"
+            android:textColor="@color/colorBlack"
+            android:textAlignment="center"/>
+
+        <EditText
+            android:id="@+id/parameter_insideRadiusInput"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="@string/parameterEdittextHint"
+            android:inputType="numberDecimal"
+            android:digits=".0123456789"
+            android:textColor="@color/colorBlack"
+            android:textSize="16sp"
+            android:textAlignment="center"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginStart="@dimen/dp_10"
+        android:layout_marginEnd="@dimen/dp_10"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/parameter_curvedHeightButton"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="18sp"
+            android:text="@string/curvedHeightText"
+            android:textColor="@color/colorBlack"
+            android:textAlignment="center"/>
+
+        <EditText
+            android:id="@+id/parameter_curvedHeightInput"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="@string/parameterEdittextHint"
+            android:inputType="numberDecimal"
+            android:digits=".0123456789"
+            android:textColor="@color/colorBlack"
+            android:textSize="16sp"
+            android:textAlignment="center"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginStart="@dimen/dp_10"
+        android:layout_marginEnd="@dimen/dp_10"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/parameter_totalHeightButton"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="18sp"
+            android:text="@string/totalHeightText"
+            android:textColor="@color/colorBlack"
+            android:textAlignment="center"/>
+
+        <EditText
+            android:id="@+id/parameter_totalHeightInput"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="@string/parameterEdittextHint"
+            android:inputType="numberDecimal"
+            android:digits=".0123456789"
+            android:textColor="@color/colorBlack"
+            android:textSize="16sp"
+            android:textAlignment="center"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginStart="@dimen/dp_10"
+        android:layout_marginEnd="@dimen/dp_10"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/parameter_padHeightButton"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="18sp"
+            android:text="@string/padHeightText"
+            android:textColor="@color/colorBlack"
+            android:textAlignment="center"/>
+
+        <EditText
+            android:id="@+id/parameter_padHeightInput"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="@string/parameterEdittextHint"
+            android:inputType="numberDecimal"
+            android:digits=".0123456789"
+            android:textColor="@color/colorBlack"
+            android:textSize="16sp"
+            android:textAlignment="center"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:orientation="horizontal" >
+
+        <CheckBox
+            android:id="@+id/parameter_ellipseDetectionCheckBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="@dimen/dp_10"
+            android:text="@string/ellipseDetection"
+            android:textColor="@color/colorBlack"
+            android:textSize="18sp"
+            android:textAlignment="center"/>
+
+        <TextView
+            android:layout_width="1dp"
+            android:layout_height="wrap_content"
+            android:background="@color/colorBlack"
+            android:textSize="18sp"/>
+
+        <CheckBox
+            android:id="@+id/parameter_testdataCheckBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="@dimen/dp_10"
+            android:text="@string/testData"
+            android:textColor="@color/colorBlack"
+            android:textSize="18sp"
+            android:textAlignment="center"/>
+
+    </LinearLayout>
+
+
+</LinearLayout>
