@@ -3,13 +3,18 @@ package com.example.contourdetector.ServicesPackage;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
+import android.os.Environment;
 import android.os.IBinder;
+import android.text.format.DateFormat;
 
+import com.example.contourdetector.DataManagerPackage.ExcelUtil;
 import com.example.contourdetector.SetterGetterPackage.BiasListViewItem;
+import com.example.contourdetector.SetterGetterPackage.DataItem;
 import com.example.contourdetector.SetterGetterPackage.ParameterItem;
 import com.example.contourdetector.SetterGetterPackage.ResultItem;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
@@ -30,6 +35,8 @@ public class ParameterServer extends Service {
     private List<Float> listBiasY = new ArrayList<>();
     // 存储结果的Item
     private ResultItem resultItem;
+    private DataItem dataItem;
+    private ExcelUtil excelUtil;
 
     public class ParameterBinder extends Binder {
         public ParameterServer getService() {
@@ -51,6 +58,7 @@ public class ParameterServer extends Service {
                 -1, -1, false, true, false, false);
         resultItem = new ResultItem();
         resultItem.setMaxDepth(-1);
+        dataItem = new DataItem();
         super.onCreate();
     }
 
@@ -174,6 +182,29 @@ public class ParameterServer extends Service {
         return biasListViewItemList;
     }
 
+    // 准备数据，创建Excel工作表文件
+    public boolean createExcelSavingFile() {
+        excelUtil = new ExcelUtil();
+        // 写入所有的D、A、X、Y、内凹、外凸偏差的值
+        dataItem.setD(listD);
+        dataItem.setA(listA);
+        dataItem.setX(listX);
+        dataItem.setY(listY);
+        dataItem.setConcaveBias(ConcaveBias);
+        dataItem.setConvexBias(ConvexBias);
+        // 给定文件名，文件名以时间命名，避免重复
+        Calendar calendar = Calendar.getInstance();
+        dataItem.setFileName(DateFormat.format("yyyy-MM-dd kk:mm:ss", calendar.getTime()).toString());
+        // 给定存储路径，存储在Download目录下
+        String filePathTemp = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath();
+        filePathTemp = filePathTemp + "/" + dataItem.getFileName() + ".xls";
+        dataItem.setFilePath(filePathTemp);
+        // 给定Excel文件的页名、列名
+        dataItem.setSheetName(new String[]{"报告", "参数", "数据"});
+        dataItem.setColName(new String[][]{{""}, {""}, {""}});
+        return true;
+    }
+
     // 将参数写入构造体
     public void setParameterItem(ParameterItem parameterItem) {
         this.parameterItem = parameterItem;
@@ -186,6 +217,10 @@ public class ParameterServer extends Service {
 
     public ResultItem getResultItem() {
         return resultItem;
+    }
+
+    public DataItem getDataItem() {
+        return dataItem;
     }
 
     // 提取其中某一类型的测量数据，用作进一步的画图、计算等操作

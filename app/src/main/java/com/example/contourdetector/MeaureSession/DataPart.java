@@ -3,13 +3,14 @@ package com.example.contourdetector.MeaureSession;
 import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
 import android.view.View;
@@ -22,6 +23,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bravin.btoast.BToast;
+import com.example.contourdetector.MainActivity;
 import com.example.contourdetector.R;
 import com.example.contourdetector.SelfDefinationViews.ResultListViewAdapter;
 import com.example.contourdetector.ServicesPackage.ParameterServer;
@@ -31,9 +33,13 @@ import com.example.contourdetector.SetterGetterPackage.ResultItem;
 
 import org.jetbrains.annotations.Contract;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import gdut.bsx.share2.FileUtil;
+import gdut.bsx.share2.Share2;
+import gdut.bsx.share2.ShareContentType;
 import lecho.lib.hellocharts.gesture.ContainerScrollType;
 import lecho.lib.hellocharts.gesture.ZoomType;
 import lecho.lib.hellocharts.model.Axis;
@@ -295,7 +301,98 @@ public class DataPart extends AppCompatActivity implements Button.OnClickListene
     // Excel有固定的格式，事实上在恢复的时候只需要参数(ParameterItem)和具体数据(DataItem)即可
     // 恢复时，只需要解析出Excel中的ParameterItem和D、X、Y、A(来自DataItem)就可以重新计算结果
     private void showExitSaveDialog() {
+        final Dialog exitDialog = new Dialog(DataPart.this, R.style.centerDialog);
+        exitDialog.setCancelable(false);
+        exitDialog.setCanceledOnTouchOutside(true);
+        Window window = exitDialog.getWindow();
+        View view = View.inflate(DataPart.this, R.layout.data_exitdialog, null);
+        view.findViewById(R.id.exit_excel).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (parameterServer.createExcelSavingFile()) {
+                    showFileSavingSuccessDialog();
+                }
 
+            }
+        });
+        view.findViewById(R.id.exit_txt).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+        view.findViewById(R.id.exit_nosave).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(DataPart.this, MainActivity.class));
+                finish();
+            }
+        });
+        view.findViewById(R.id.exit_cancel).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                exitDialog.dismiss();
+            }
+        });
+        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+        window.setContentView(view);
+        exitDialog.show();
+    }
+
+    // 显示导出成功，可以执行进一步的操作，包括打开、分享、返回等
+    private void showFileSavingSuccessDialog() {
+        Dialog successDialog = new Dialog(DataPart.this, R.style.centerDialog);
+        successDialog.setCancelable(false);
+        successDialog.setCanceledOnTouchOutside(true);
+        Window window = successDialog.getWindow();
+        View view = View.inflate(DataPart.this, R.layout.data_successdialog, null);
+        final String fileName = parameterServer.getDataItem().getFileName();
+        final String filePath = parameterServer.getDataItem().getFilePath();
+        TextView fileNameText = view.findViewById(R.id.success_filename);
+        TextView filePathText = view.findViewById(R.id.success_filepath);
+        fileNameText.setText(fileName);
+        filePathText.setText(filePath);
+        // 使用手机默认的App打开文件
+        view.findViewById(R.id.success_open).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Uri uri = FileProvider.getUriForFile(DataPart.this,
+                        "com.example.contourdetector.fileprovider", new File(filePath));
+                Intent intent = new Intent("android.intent.action.VIEW");
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                intent.setDataAndType(uri, "application/vnd.ms-excel");
+                startActivityForResult(intent, 1);
+            }
+        });
+        // 使用Share2插件实现调用自带的文件分享功能
+        view.findViewById(R.id.success_share).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new Share2.Builder(DataPart.this).setContentType(ShareContentType.FILE)
+                        .setShareFileUri(FileUtil.getFileUri(DataPart.this,
+                                ShareContentType.FILE, new File(filePath)))
+                        .build().shareBySystem();
+            }
+        });
+        // 回到主页面
+        view.findViewById(R.id.success_backhome).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(DataPart.this, MainActivity.class));
+                finish();
+            }
+        });
+        // 回到上一级界面，就是退出时显示的界面
+        view.findViewById(R.id.success_backlast).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showExitSaveDialog();
+            }
+        });
+        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+        window.setContentView(view);
+        successDialog.show();
     }
 
     @Contract("null -> true")
