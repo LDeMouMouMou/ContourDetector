@@ -5,9 +5,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 
-import com.bravin.btoast.BToast;
+import com.example.contourdetector.ImportSession.SelectionPart;
 import com.example.contourdetector.MeaureSession.ConfigurationPart;
 
 public class MainActivity extends AppCompatActivity {
@@ -23,6 +22,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(MainActivity.this, ConfigurationPart.class));
+                finish();
+            }
+        });
+        importButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, SelectionPart.class));
                 finish();
             }
         });

@@ -13,6 +13,9 @@ import com.example.contourdetector.SetterGetterPackage.DataItem;
 import com.example.contourdetector.SetterGetterPackage.ParameterItem;
 import com.example.contourdetector.SetterGetterPackage.ResultItem;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -59,6 +62,7 @@ public class ParameterServer extends Service {
         resultItem = new ResultItem();
         resultItem.setMaxDepth(-1);
         dataItem = new DataItem();
+        excelUtil = new ExcelUtil();
         super.onCreate();
     }
 
@@ -97,6 +101,10 @@ public class ParameterServer extends Service {
     // 在椭圆段的标准值比较复杂，需要用几何坐标解出
     // 然后计算得到偏差值，求出最大值，比较得到形状是否合格，之后可以计算椭圆度
     public void applyResultAlgorithm() {
+        // 这里的ConvexBias/ConvexBias的元素都是add进去的，所以在计算时要重置
+        // 不然就越开越多了
+        ConcaveBias = new ArrayList<>();
+        ConvexBias = new ArrayList<>();
         // 坐标修改完毕后，遍历整个距离列表D，取得内凹/外凸偏差的列表及最大值
         for (int i = 0; i < listD.size(); i++) {
             float standardInLine = parameterItem.getInsideDiameter();
@@ -184,7 +192,6 @@ public class ParameterServer extends Service {
 
     // 准备数据，创建Excel工作表文件
     public boolean createExcelSavingFile() {
-        excelUtil = new ExcelUtil();
         // 写入所有的D、A、X、Y、内凹、外凸偏差的值
         dataItem.setD(listD);
         dataItem.setA(listA);
@@ -194,14 +201,119 @@ public class ParameterServer extends Service {
         dataItem.setConvexBias(ConvexBias);
         // 给定文件名，文件名以时间命名，避免重复
         Calendar calendar = Calendar.getInstance();
-        dataItem.setFileName(DateFormat.format("yyyy-MM-dd kk:mm:ss", calendar.getTime()).toString());
+        dataItem.setFileName(DateFormat.format("yyyy-MM-dd_kk:mm:ss", calendar.getTime()).toString()+".xls");
         // 给定存储路径，存储在Download目录下
         String filePathTemp = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath();
-        filePathTemp = filePathTemp + "/" + dataItem.getFileName() + ".xls";
+        filePathTemp = filePathTemp + "/" + dataItem.getFileName();
         dataItem.setFilePath(filePathTemp);
         // 给定Excel文件的页名、列名
         dataItem.setSheetName(new String[]{"报告", "参数", "数据"});
-        dataItem.setColName(new String[][]{{""}, {""}, {""}});
+        dataItem.setColName(new String[][]{{"类型","椭圆度","直径","深度","最大内凹偏差","最大内凹偏差位置","最大外凸偏差"
+                ,"最大外凸偏差位置","形状(是否合格)"},
+                {"封头类型","非标准封头","内凹偏差","外凸偏差","封头内径","曲面高度","封头总高","垫块高度","椭圆度检测"},
+                {"距离","角度","坐标X","坐标Y","内凹偏差","外凸偏差"}});
+        // 给定Excel文件数据，详细数据可以循环提取，但是前两个比较麻烦
+        List<String> reportRowList = new ArrayList<>();
+        reportRowList.add(parameterItem.isTypeRound()?"椭圆":"蝶形");
+        reportRowList.add(String.valueOf(resultItem.getEllipticity()));
+        reportRowList.add(String.valueOf(parameterItem.getInsideDiameter()));
+        reportRowList.add(String.valueOf(resultItem.getMaxDepth()));
+        reportRowList.add(String.valueOf(resultItem.getMaxConcaveBias()));
+        reportRowList.add("X="+resultItem.getMaxConcaveCorX()+" Y="+resultItem.getMaxConcaveCorY());
+        reportRowList.add(String.valueOf(resultItem.getMaxConvexBias()));
+        reportRowList.add("X="+resultItem.getMaxConvexCorX()+" Y="+resultItem.getMaxConvexCorY());
+        reportRowList.add(resultItem.isQualified()?"合格":"不合格");
+        dataItem.setReportRow(reportRowList);
+        List<String> parameterRowList = new ArrayList<>();
+        parameterRowList.add(parameterItem.isTypeRound()?"椭圆":"蝶形");
+        parameterRowList.add(parameterItem.isNonStandard()?"是":"否");
+        parameterRowList.add(String.valueOf(parameterItem.getConcaveBias()));
+        parameterRowList.add(String.valueOf(parameterItem.getConvexBias()));
+        parameterRowList.add(String.valueOf(parameterItem.getInsideDiameter()));
+        parameterRowList.add(String.valueOf(parameterItem.getCurvedHeight()));
+        parameterRowList.add(String.valueOf(parameterItem.getTotalHeight()));
+        parameterRowList.add(String.valueOf(parameterItem.getPadHeight()));
+        parameterRowList.add(parameterItem.isEllipseDetection()?"是":"否");
+        dataItem.setParameterRow(parameterRowList);
+        // 将数据赋予Excel处理，参数均在单独的Item内，并在server中处理，在util中应用
+        excelUtil.setDataItem(dataItem);
+        excelUtil.initWriteExcelWorkBook();
+        return true;
+    }
+
+    // 校验目标Excel是否符合标准，parameterServer作为一个媒介，传递结果
+    public boolean isExcelFileValid(String filePath) {
+        return excelUtil.isExcelFileValid(filePath);
+    }
+
+    // 调用ExcelUtil中的方法读取数据，之后回传dataItem，分离、重新计算得到数据
+    public void readExcelFromExistedFile(String filePath) {
+        dataItem.setFilePath(filePath);
+        excelUtil.setDataItem(dataItem);
+        excelUtil.readDataFromExistedExcel();
+        dataItem = excelUtil.getDataItem();
+        // 从DataItem中分离出parameterItem
+        parameterItem.setTypeRound(dataItem.getParameterRow().get(0).equals("椭圆"));
+        parameterItem.setNonStandard(dataItem.getParameterRow().get(1).equals("是"));
+        parameterItem.setConcaveBias(Float.valueOf(dataItem.getParameterRow().get(2)));
+        parameterItem.setConvexBias(Float.valueOf(dataItem.getParameterRow().get(3)));
+        parameterItem.setInsideDiameter(Float.valueOf(dataItem.getParameterRow().get(4)));
+        parameterItem.setCurvedHeight(Float.valueOf(dataItem.getParameterRow().get(5)));
+        parameterItem.setTotalHeight(Float.valueOf(dataItem.getParameterRow().get(6)));
+        parameterItem.setPadHeight(Float.valueOf(dataItem.getParameterRow().get(7)));
+        parameterItem.setEllipseDetection(dataItem.getParameterRow().get(8).equals("是"));
+        // 得到原始数据值（已经经过坐标变换），不能走setAllDataList
+        listD = dataItem.getD();
+        listA = dataItem.getA();
+        listX = dataItem.getX();
+        listY = dataItem.getY();
+        // 调用结果计算方法得到resultItem
+        applyResultAlgorithm();
+    }
+
+    // 删除指定路径的文件
+    public boolean delteExistedExcelFile(String filePath) {
+        File file = new File(filePath);
+        if (file.exists()) {
+            return file.delete();
+        } else {
+            return false;
+        }
+    }
+
+    // 准备数据，创建TXT文件
+    // TXT文件的创建比较简单，不需要再开一个class
+    // 由于不能从TXT恢复数据，所以也不需要单独的Item来解析
+    public boolean createTxtSavingFile() {
+        Calendar calendar = Calendar.getInstance();
+        String fileName = DateFormat.format("yyyy-MM-dd_kk:mm:ss", calendar.getTime()).toString()+".txt";
+        String filePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath()
+                + "/" + fileName;
+        dataItem.setFileName(fileName);
+        dataItem.setFilePath(filePath);
+        String fileContent = "文件创建时间："+fileName.substring(0, fileName.indexOf("."))+"\n"
+                +"这是本次测量的简要报告，具体数据表现请参照Excel文档!"+"\n"
+                +"测量目标类型："+(parameterItem.isTypeRound()?"椭圆":"蝶形")+"\n"
+                +"测量目标直径："+parameterItem.getInsideDiameter()+"\n"
+                +"测量目标深度："+resultItem.getMaxDepth()+"\n"
+                +"椭圆度："+resultItem.getEllipticity()+"\n"
+                +"测得最大内凹偏差："+resultItem.getMaxConcaveBias()
+                +" 它所在位置："+"X="+resultItem.getMaxConcaveCorX()+" Y="+resultItem.getMaxConcaveCorY()+"\n"
+                +"测得最大外凸偏差"+resultItem.getMaxConvexBias()
+                +" 它所在位置："+"X="+resultItem.getMaxConvexCorX()+" Y="+resultItem.getMaxConvexCorY()+"\n"
+                +"测量样品形状："+(resultItem.isQualified()?"合格":"不合格")+"\n";
+        try {
+            File file = new File(filePath);
+            if (!file.exists()) {
+                boolean b = file.createNewFile();
+            }
+            FileOutputStream fileOutputStream = new FileOutputStream(file);
+            fileOutputStream.write(fileContent.getBytes());
+            fileOutputStream.flush();
+            fileOutputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return true;
     }
 

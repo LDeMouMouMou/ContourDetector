@@ -9,7 +9,7 @@ public class DataItem {
     private String[] sheetName;
     private String[][] colName;
     private List<String> reportRow;
-    private List<String> pamaterRow;
+    private List<String> parameterRow;
     private List<Float> D;
     private List<Float> A;
     private List<Float> X;
@@ -57,12 +57,12 @@ public class DataItem {
         this.reportRow = reportRow;
     }
 
-    public List<String> getPamaterRow() {
-        return pamaterRow;
+    public List<String> getParameterRow() {
+        return parameterRow;
     }
 
-    public void setPamaterRow(List<String> pamaterRow) {
-        this.pamaterRow = pamaterRow;
+    public void setParameterRow(List<String> parameterRow) {
+        this.parameterRow = parameterRow;
     }
 
     public List<Float> getD() {

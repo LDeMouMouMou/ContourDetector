@@ -15,6 +15,7 @@
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         <service android:name=".ServicesPackage.ParameterServer" />
         <service android:name=".ServicesPackage.BluetoothServer" />
+        <activity android:name=".ImportSession.SelectionPart" />
         <activity android:name=".MeaureSession.ConfigurationPart" />
         <activity android:name=".MeaureSession.ScannerPart" />
         <activity android:name=".MeaureSession.DataPart" />

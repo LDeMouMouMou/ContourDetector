@@ -86,6 +86,7 @@ public class DataPart extends AppCompatActivity implements Button.OnClickListene
         resultListView = findViewById(R.id.data_resultListView);
         headTitleTextView.setText(R.string.dataTitle);
         backButton.setVisibility(View.VISIBLE);
+        backButton.setOnClickListener(this);
         // reportButton要换成info的图标
         reportButton.setBackgroundResource(R.drawable.buttton_info);
         reportButton.setVisibility(View.VISIBLE);
@@ -310,20 +311,24 @@ public class DataPart extends AppCompatActivity implements Button.OnClickListene
             @Override
             public void onClick(View v) {
                 if (parameterServer.createExcelSavingFile()) {
+                    exitDialog.dismiss();
                     showFileSavingSuccessDialog();
                 }
-
             }
         });
         view.findViewById(R.id.exit_txt).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                if (parameterServer.createTxtSavingFile()) {
+                    exitDialog.dismiss();
+                    showFileSavingSuccessDialog();
+                }
             }
         });
         view.findViewById(R.id.exit_nosave).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                exitDialog.dismiss();
                 startActivity(new Intent(DataPart.this, MainActivity.class));
                 finish();
             }
@@ -341,7 +346,7 @@ public class DataPart extends AppCompatActivity implements Button.OnClickListene
 
     // 显示导出成功，可以执行进一步的操作，包括打开、分享、返回等
     private void showFileSavingSuccessDialog() {
-        Dialog successDialog = new Dialog(DataPart.this, R.style.centerDialog);
+        final Dialog successDialog = new Dialog(DataPart.this, R.style.centerDialog);
         successDialog.setCancelable(false);
         successDialog.setCanceledOnTouchOutside(true);
         Window window = successDialog.getWindow();
@@ -352,16 +357,22 @@ public class DataPart extends AppCompatActivity implements Button.OnClickListene
         TextView filePathText = view.findViewById(R.id.success_filepath);
         fileNameText.setText(fileName);
         filePathText.setText(filePath);
-        // 使用手机默认的App打开文件
+        // 使用手机默认的App打开文件，根据文件类型设置不同的DataAndType
         view.findViewById(R.id.success_open).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Uri uri = FileProvider.getUriForFile(DataPart.this,
                         "com.example.contourdetector.fileprovider", new File(filePath));
                 Intent intent = new Intent("android.intent.action.VIEW");
+                intent.addCategory("android.intent.category.DEFAULT");
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                intent.setDataAndType(uri, "application/vnd.ms-excel");
+                if (fileName.contains(".xls")) {
+                    intent.setDataAndType(uri, "application/vnd.ms-excel");
+                }
+                else {
+                    intent.setDataAndType(uri, "text/plain");
+                }
                 startActivityForResult(intent, 1);
             }
         });
@@ -379,6 +390,7 @@ public class DataPart extends AppCompatActivity implements Button.OnClickListene
         view.findViewById(R.id.success_backhome).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                successDialog.dismiss();
                 startActivity(new Intent(DataPart.this, MainActivity.class));
                 finish();
             }
@@ -387,6 +399,7 @@ public class DataPart extends AppCompatActivity implements Button.OnClickListene
         view.findViewById(R.id.success_backlast).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                successDialog.dismiss();
                 showExitSaveDialog();
             }
         });

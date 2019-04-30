@@ -3,39 +3,18 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="@drawable/white_roundcorner">
+    android:background="@color/colorWhite" >
 
     <Button
-        android:id="@+id/exit_title"
+        android:id="@+id/listview_filename"
         style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAlignment="center"
-        android:textColor="@color/colorBlack"
-        android:textSize="18sp"
-        android:text="@string/exit_title" />
-
-    <Button
-        android:id="@+id/exit_excel"
-        style="@style/Widget.AppCompat.Button.Borderless"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:enabled="false"
         android:textAllCaps="false"
-        android:textAlignment="center"
-        android:textColor="@color/colorBlack"
         android:textSize="18sp"
-        android:text="@string/exit_excel" />
-
-    <Button
-        android:id="@+id/exit_txt"
-        style="@style/Widget.AppCompat.Button.Borderless"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAllCaps="false"
         android:textAlignment="center"
-        android:textColor="@color/colorBlack"
-        android:textSize="18sp"
-        android:text="@string/exit_txt" />
+        android:textColor="@color/colorBlack"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -43,15 +22,14 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/exit_nosave"
+            android:id="@+id/listview_delete"
             style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textAlignment="center"
-            android:textColor="@color/colorBlack"
             android:textSize="18sp"
-            android:text="@string/success_backhomepage" />
+            android:text="@string/import_item_delete"
+            android:textColor="@color/colorBlack"/>
 
         <TextView
             android:layout_width="1dp"
@@ -61,18 +39,16 @@
             android:background="@color/colorBlack"/>
 
         <Button
-            android:id="@+id/exit_cancel"
+            android:id="@+id/listview_open"
             style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textAlignment="center"
-            android:textColor="@color/colorBlack"
+            android:enabled="false"
             android:textSize="18sp"
-            android:text="@string/exit_cancel" />
+            android:text="@string/import_item_checking"
+            android:textColor="@color/colorLightGray"/>
 
     </LinearLayout>
-
-
 
 </LinearLayout>
