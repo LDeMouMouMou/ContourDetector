@@ -66,19 +66,23 @@ public class ConfigurationPart extends AppCompatActivity {
         Fragment fragment2 = new TypeFragment();
         Fragment fragment3 = new ParameterFragment();
         fragments = new Fragment[]{fragment1, fragment2, fragment3};
-        lastFragmentIndex = 1;
+        lastFragmentIndex = 0;
         getSupportFragmentManager().beginTransaction().replace(R.id.configuration_fragmentview, fragments[lastFragmentIndex])
                 .show(fragments[lastFragmentIndex]).commit();
     }
 
     private void bottomNavigationBarInit() {
-        bottomNavigationBar.setActiveColor(R.color.colorLightGray)
-                .setBarBackgroundColor(R.color.colorPrimary);
+        // 初始化底部导航栏，这里的ActiveColor其实是文字/图标所在的背景色
+        // BarBackgroundColor是图标及文字选中时候的颜色，两者在含义上对调了
+        bottomNavigationBar.setActiveColor(R.color.colorWhite)
+                .setBarBackgroundColor(R.color.colorMainBlue);
+        // 添加Tab
         bottomNavigationBar.addItem(new BottomNavigationItem(R.drawable.icon_bluetooth, "设备"))
                 .addItem(new BottomNavigationItem(R.drawable.icon_type,"类型"))
                 .addItem(new BottomNavigationItem(R.drawable.icon_parameter, "参数"));
         bottomNavigationBar.setMode(BottomNavigationBar.MODE_SHIFTING);
         bottomNavigationBar.setFirstSelectedPosition(lastFragmentIndex);
+        // 单击某个Tab时切换Fragment
         bottomNavigationBar.setTabSelectedListener(new BottomNavigationBar.OnTabSelectedListener() {
             @Override
             public void onTabSelected(int position) {

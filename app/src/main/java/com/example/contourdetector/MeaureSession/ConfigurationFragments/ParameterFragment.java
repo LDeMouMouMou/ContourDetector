@@ -19,7 +19,6 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 
-import com.bravin.btoast.BToast;
 import com.example.contourdetector.R;
 import com.example.contourdetector.ServicesPackage.ParameterServer;
 import com.example.contourdetector.SetterGetterPackage.ParameterItem;
@@ -35,12 +34,11 @@ public class ParameterFragment extends Fragment {
     private Button curvedHeightButton;
     private Button totalHeightButton;
     private Button padHeightButton;
-    private EditText insideRadiusInput;
+    private EditText insideDiameterInput;
     private EditText curvedHeightInput;
     private EditText totalHeightInput;
     private EditText padHeightInput;
     private CheckBox ellipseCheckBox;
-    private CheckBox testDataCheckBox;
 
     @Nullable
     @Override
@@ -58,18 +56,19 @@ public class ParameterFragment extends Fragment {
     }
 
     // 当该fragment重新获得焦点时，重新获取参数，刷新曲面半径的可输入状态
+    // 也可以根据新获得的paramterItem刷新参数
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
         if (!hidden) {
             parameterItem = parameterServer.getParameterItem();
-            setCurvedHeightInputState();
+            setParameterFromSelection();
         }
     }
 
     private void findViewByIds() {
         insideRadiusButton = getActivity().findViewById(R.id.parameter_insideRadiusButton);
-        insideRadiusInput = getActivity().findViewById(R.id.parameter_insideRadiusInput);
+        insideDiameterInput = getActivity().findViewById(R.id.parameter_insideRadiusInput);
         curvedHeightButton = getActivity().findViewById(R.id.parameter_curvedHeightButton);
         curvedHeightInput = getActivity().findViewById(R.id.parameter_curvedHeightInput);
         totalHeightButton = getActivity().findViewById(R.id.parameter_totalHeightButton);
@@ -77,14 +76,19 @@ public class ParameterFragment extends Fragment {
         padHeightButton = getActivity().findViewById(R.id.parameter_padHeightButton);
         padHeightInput = getActivity().findViewById(R.id.parameter_padHeightInput);
         ellipseCheckBox = getActivity().findViewById(R.id.parameter_ellipseDetectionCheckBox);
-        testDataCheckBox = getActivity().findViewById(R.id.parameter_testdataCheckBox);
     }
 
-    private void setCurvedHeightInputState() {
+    // 根据新获得的parameterItem刷新参数内容
+    private void setParameterFromSelection() {
+        // 展开填入新的参数，曲面高度也会被一起保存，所以不需要和封头内径对等
+        // 注意当参数值为-1时，留空，这是初始化之后的状态，强行填入会导致输入字符不符要求错误
+        insideDiameterInput.setText(parameterItem.getInsideDiameter()==-1?null:String.valueOf(parameterItem.getInsideDiameter()));
+        curvedHeightInput.setText(parameterItem.getCurvedHeight()==-1?null:String.valueOf(parameterItem.getCurvedHeight()));
+        totalHeightInput.setText(parameterItem.getTotalHeight()==-1?null:String.valueOf(parameterItem.getTotalHeight()));
+        padHeightInput.setText(parameterItem.getPadHeight()==-1?null:String.valueOf(parameterItem.getPadHeight()));
         // 重新切换回改fragment后检查是否为非标准封头，如果不是，将曲面高度显示为封头内径的，并使其不可用
         if (!parameterItem.isNonStandard()) {
             curvedHeightInput.setError(null, null);
-            curvedHeightInput.setText(insideRadiusInput.getText().toString());
             curvedHeightInput.setTextColor(getResources().getColor(R.color.colorLightGray));
             curvedHeightInput.setEnabled(false);
             curvedHeightInput.setFocusable(false);
@@ -108,9 +112,9 @@ public class ParameterFragment extends Fragment {
             parameterServer = parameterBinder.getService();
             initInputWatcher();
             parameterItem = parameterServer.getParameterItem();
-            setCurvedHeightInputState();
-            BToast.success(getActivity().getApplicationContext()).animate(true)
-                    .text("参数实时监测服务已开启").show();
+            setParameterFromSelection();
+//            BToast.success(getActivity().getApplicationContext()).animate(true)
+//                    .text("参数实时监测服务已开启").show();
         }
 
         @Override
@@ -119,8 +123,10 @@ public class ParameterFragment extends Fragment {
         }
     };
 
+    // 给四个EditText添加监听，可以做到空白内容实时监测，同时对于封头内径和曲面高度也可以联动（标准封头）
+    // 最重要的是，保存到parameterItem后，可以实现实时画预览图
     private void initInputWatcher() {
-        insideRadiusInput.addTextChangedListener(new TextWatcher() {
+        insideDiameterInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -134,9 +140,9 @@ public class ParameterFragment extends Fragment {
             @Override
             public void afterTextChanged(Editable s) {
                 // 当封头为标准封头时，曲面高度=封头内径，前者要随着后者的输入而更改
-                String insideRadiusInputText = insideRadiusInput.getText().toString();
+                String insideRadiusInputText = insideDiameterInput.getText().toString();
                 if (!isNullEmptyBlank(insideRadiusInputText)) {
-                    insideRadiusInput.setBackgroundResource(R.color.colorWhite);
+                    insideDiameterInput.setBackgroundResource(R.color.colorWhite);
                     parameterItem.setInsideDiameter(Float.parseFloat(insideRadiusInputText));
                     if (!parameterItem.isNonStandard()) {
                         curvedHeightInput.setText(insideRadiusInputText);
@@ -144,8 +150,8 @@ public class ParameterFragment extends Fragment {
                     }
                 }
                 else {
-                    insideRadiusInput.setError("参数不可为空", null);
-                    insideRadiusInput.setBackgroundResource(R.drawable.errortextbackground);
+                    insideDiameterInput.setError("参数不可为空", null);
+                    insideDiameterInput.setBackgroundResource(R.drawable.errortextbackground);
                     if (!parameterItem.isNonStandard()) {
                         curvedHeightInput.setText("");
                     }
@@ -235,13 +241,6 @@ public class ParameterFragment extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 parameterItem.setEllipseDetection(isChecked);
-                parameterServer.setParameterItem(parameterItem);
-            }
-        });
-        testDataCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                parameterItem.setTestData(isChecked);
                 parameterServer.setParameterItem(parameterItem);
             }
         });

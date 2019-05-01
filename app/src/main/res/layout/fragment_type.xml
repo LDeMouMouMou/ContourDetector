@@ -82,6 +82,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:enabled="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
             android:hint="@string/concaveBiasHint"
             android:textSize="16sp"
             android:textAlignment="center"/>
@@ -111,6 +114,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:enabled="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
             android:hint="@string/convexBiasHint"
             android:textSize="16sp"
             android:textAlignment="center"/>

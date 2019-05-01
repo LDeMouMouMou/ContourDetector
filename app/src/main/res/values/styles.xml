@@ -16,4 +16,12 @@
         <item name="android:scrollHorizontally">true</item>
     </style>
 
+    <style name="bottomDialog" parent="Base.Theme.AppCompat.Light.Dialog" >
+        <item name="android:windowBackground">@color/colorTransparent</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:scrollHorizontally">true</item>
+    </style>
+
 </resources>

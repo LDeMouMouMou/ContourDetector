@@ -2,6 +2,7 @@ package com.example.contourdetector.SetterGetterPackage;
 
 public class ParameterItem {
 
+    private String time;
     private float concaveBias;
     private float convexBias;
     private float insideDiameter;
@@ -11,11 +12,12 @@ public class ParameterItem {
     private boolean nonStandard;
     private boolean typeRound;
     private boolean ellipseDetection;
-    private boolean testData;
+    private boolean deleted;
 
-    public ParameterItem(float concaveBias, float convexBias, float insideDiameter, float curvedHeight,
+    public ParameterItem(String time, float concaveBias, float convexBias, float insideDiameter, float curvedHeight,
                          float totalHeight, float padHeight, boolean nonStandard, boolean typeRound,
-                         boolean ellipseDetection, boolean testData) {
+                         boolean ellipseDetection, boolean deleted) {
+        this.time = time;
         this.concaveBias = concaveBias;
         this.convexBias = convexBias;
         this.insideDiameter = insideDiameter;
@@ -25,7 +27,15 @@ public class ParameterItem {
         this.nonStandard = nonStandard;
         this.typeRound = typeRound;
         this.ellipseDetection = ellipseDetection;
-        this.testData = testData;
+        this.deleted = deleted;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
     }
 
     public float getConcaveBias() {
@@ -100,11 +110,11 @@ public class ParameterItem {
         this.ellipseDetection = ellipseDetection;
     }
 
-    public boolean isTestData() {
-        return testData;
+    public boolean isDeleted() {
+        return deleted;
     }
 
-    public void setTestData(boolean testData) {
-        this.testData = testData;
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 }

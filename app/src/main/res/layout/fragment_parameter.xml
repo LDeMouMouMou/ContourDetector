@@ -170,7 +170,7 @@
             android:layout_weight="1"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="@dimen/dp_10"
-            android:text="@string/testData"
+            android:text="@string/deleted"
             android:textColor="@color/colorBlack"
             android:textSize="18sp"
             android:textAlignment="center"/>

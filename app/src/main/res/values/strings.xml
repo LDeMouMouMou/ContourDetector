@@ -17,7 +17,7 @@
     <string name="totalHeightText">封头总高：</string>
     <string name="parameterEdittextHint">单位：毫米(mm)</string>
     <string name="ellipseDetection">椭圆度检测</string>
-    <string name="testData">使用测试数据</string>
+    <string name="deleted">使用测试数据</string>
     <string name="padHeightText">垫块高度：</string>
     <string name="convexBias">外凸偏差：</string>
     <string name="convexBiasHint">设定值为20毫米</string>
@@ -25,6 +25,10 @@
     <string name="concaveBiasHint">设定值为10毫米</string>
     <string name="saveConfiguration">保存当前参数</string>
     <string name="clearConfiguration">导入历史参数</string>
+    <string name="type_import_title">已保存的历史参数：</string>
+    <string name="type_import_time">保存时间：</string>
+    <string name="type_import_delete">删除参数</string>
+    <string name="type_import_apply">应用参数</string>
     <string name="scannerTitle">扫描</string>
     <string name="scannerStart">开始测量</string>
     <string name="scannerResume">继续测量</string>

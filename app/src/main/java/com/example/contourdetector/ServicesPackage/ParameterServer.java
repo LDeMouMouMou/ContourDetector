@@ -7,6 +7,7 @@ import android.os.Environment;
 import android.os.IBinder;
 import android.text.format.DateFormat;
 
+import com.example.contourdetector.DataManagerPackage.ParameterDataBaseManager;
 import com.example.contourdetector.DataManagerPackage.ExcelUtil;
 import com.example.contourdetector.SetterGetterPackage.BiasListViewItem;
 import com.example.contourdetector.SetterGetterPackage.DataItem;
@@ -40,6 +41,8 @@ public class ParameterServer extends Service {
     private ResultItem resultItem;
     private DataItem dataItem;
     private ExcelUtil excelUtil;
+    // SQLite数据库相关
+    private ParameterDataBaseManager parameterDataBaseManager;
 
     public class ParameterBinder extends Binder {
         public ParameterServer getService() {
@@ -57,13 +60,36 @@ public class ParameterServer extends Service {
         // 构建参数初始值：默认标准封头、默认为椭圆形、默认不椭圆检测、默认不测试参数、默认内凹/外凸偏差
         // 其他均为空，这也是判断某个参数是否为空的依据
         // 事实上，可以为空的只有四个参数值（内凹/外凸为固定值，不可随意修改），将其设为-1即可
-        parameterItem = new ParameterItem(10, 20, -1, -1,
+        parameterItem = new ParameterItem(null, 10, 20, -1, -1,
                 -1, -1, false, true, false, false);
         resultItem = new ResultItem();
         resultItem.setMaxDepth(-1);
         dataItem = new DataItem();
         excelUtil = new ExcelUtil();
+        parameterDataBaseManager = new ParameterDataBaseManager();
+        parameterDataBaseManager.initDataBase(this);
         super.onCreate();
+    }
+
+    // 保存参数，以保存的时间作为开头（除主键外的第一项）
+    public boolean saveCurrentParameterItem() {
+        Calendar calendar = Calendar.getInstance();
+        // 换成百分号是为了SQLite代码能够正常执行，:/_/#等都会被认为是命令，导致错误
+        String saveTime = DateFormat.format("yyyy-MM-dd-kk:mm:ss", calendar.getTime()).toString();
+        parameterItem.setTime(saveTime);
+        parameterDataBaseManager.addOneParameterRecordLine(parameterItem);
+        return true;
+    }
+
+    // 获取参数列表，传递到ListView中展示
+    public List<ParameterItem> getSavedParameterItems() {
+        return parameterDataBaseManager.getParameterItemList();
+    }
+
+    // 删除指定位置的行
+    public boolean deleteSavedParameterItem(int position) {
+        parameterDataBaseManager.deleteParameterItem(position);
+        return true;
     }
 
     public boolean getParamterInspectionResult() {
@@ -361,6 +387,7 @@ public class ParameterServer extends Service {
 
     @Override
     public void onDestroy() {
+        parameterDataBaseManager.closeDataBase();
         super.onDestroy();
     }
 }
