@@ -2,6 +2,7 @@ package com.example.contourdetector.SetterGetterPackage;
 
 public class ParameterItem {
 
+    private int id;
     private String time;
     private float concaveBias;
     private float convexBias;
@@ -28,6 +29,14 @@ public class ParameterItem {
         this.typeRound = typeRound;
         this.ellipseDetection = ellipseDetection;
         this.deleted = deleted;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getTime() {

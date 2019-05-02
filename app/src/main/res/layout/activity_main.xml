@@ -8,40 +8,102 @@
 
     <include layout="@layout/headtitle_universal" />
 
-    <Button
-        android:id="@+id/homepage_start"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="@dimen/homepagebuttons"
-        android:background="@drawable/roundcorner"
-        android:textSize="18sp"
-        android:textColor="@color/colorBlack"
-        android:typeface="monospace"
-        android:text="@string/homepageButton1"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="6">
 
-    <Button
-        android:id="@+id/homepage_history"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="@dimen/homepagebuttons"
-        android:background="@drawable/roundcorner"
-        android:textSize="18sp"
-        android:textColor="@color/colorBlack"
-        android:typeface="monospace"
-        android:text="@string/homepageButton2"/>
 
-    <Button
-        android:id="@+id/homepage_import"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="@dimen/homepagebuttons"
-        android:background="@drawable/roundcorner"
-        android:textSize="18sp"
-        android:textColor="@color/colorBlack"
-        android:typeface="monospace"
-        android:text="@string/homepageButton3"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <Button
+            android:id="@+id/homepage_start"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:textColor="@color/colorAccent"
+            android:textAlignment="center"
+            android:textSize="20sp"
+            android:text="@string/newHomeButton1"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <Button
+            android:id="@+id/homepage_history"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:textColor="@color/colorBlack"
+            android:textAlignment="center"
+            android:textSize="19sp"
+            android:text="@string/newHomeButton2"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <Button
+            android:id="@+id/homepage_import"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:textAllCaps="false"
+            android:textColor="@color/colorBlack"
+            android:textAlignment="center"
+            android:textSize="19sp"
+            android:text="@string/newHomeButton3"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <Button
+            android:id="@+id/homepage_settings"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:textColor="@color/colorBlack"
+            android:textAlignment="center"
+            android:textSize="19sp"
+            android:text="@string/newHomeButton4"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_gravity="center">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textSize="14sp"
+            android:textAlignment="center"
+            android:textColor="@color/colorLightGray"
+            android:text="@string/homepage_info"/>
+
+    </LinearLayout>
 
 </LinearLayout>

@@ -13,11 +13,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+        <activity android:name=".HistorySession.HistorySelectionPart" />
         <service android:name=".ServicesPackage.ParameterServer" />
         <service android:name=".ServicesPackage.BluetoothServer" />
         <activity android:name=".ImportSession.SelectionPart" />
         <activity android:name=".MeaureSession.ConfigurationPart" />
-        <activity android:name=".MeaureSession.ScannerPart" />
         <activity android:name=".MeaureSession.DataPart" />
         <activity android:name=".MainActivity">
             <intent-filter>

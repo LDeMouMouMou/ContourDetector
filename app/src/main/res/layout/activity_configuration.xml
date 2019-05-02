@@ -1,23 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
-
-    <include layout="@layout/headtitle_universal" />
+    android:layout_height="match_parent"
+    android:background="@color/colorWhite">
 
     <LinearLayout
-        android:id="@+id/configuration_fragmentview"
+        android:id="@+id/configuration_title"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/fragmentHeight"
-        android:layout_above="@+id/configuration_bottombar"
-        android:orientation="vertical" >
+        android:layout_height="wrap_content">
+
+        <include layout="@layout/headtitle_universal" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/configuration_center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/configuration_bottombar"
+        android:layout_below="@id/configuration_title"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/configuration_preview"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1.3"
+            android:layout_marginTop="@dimen/dp_10"
+            android:orientation="vertical">
+
+            <lecho.lib.hellocharts.view.LineChartView
+                android:id="@+id/configuration_scanner"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/configuration_fragmentview"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+        </LinearLayout>
 
     </LinearLayout>
 
     <com.ashokvarma.bottomnavigation.BottomNavigationBar
         android:id="@+id/configuration_bottombar"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true" >
     </com.ashokvarma.bottomnavigation.BottomNavigationBar>
 

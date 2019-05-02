@@ -38,8 +38,8 @@ public class TypeFragment extends Fragment implements Button.OnClickListener {
     private ParameterServer parameterServer;
     private ParameterItem parameterItem;
     private List<ParameterItem> parameterItemList;
-    private NiceSpinner typeSpinner;
-    private NiceSpinner nonStdSpinner;
+    private Button typeButton;
+    private Button nonstdButton;
     private Button concaveButton;
     private Button convexButton;
     private EditText concaveEditText;
@@ -64,8 +64,10 @@ public class TypeFragment extends Fragment implements Button.OnClickListener {
     }
 
     private void findViewByIds() {
-        typeSpinner = getActivity().findViewById(R.id.typeSpinner);
-        nonStdSpinner = getActivity().findViewById(R.id.nonstd_spinner);
+        typeButton = getActivity().findViewById(R.id.type_headtype);
+        nonstdButton = getActivity().findViewById(R.id.type_nonstdard);
+        typeButton.setOnClickListener(this);
+        nonstdButton.setOnClickListener(this);
         concaveButton = getActivity().findViewById(R.id.type_concaveButton);
         convexButton = getActivity().findViewById(R.id.type_convexButton);
         concaveEditText = getActivity().findViewById(R.id.type_concaveInput);
@@ -78,10 +80,22 @@ public class TypeFragment extends Fragment implements Button.OnClickListener {
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            // 单击parameterItem中对应项，然后应用变化
+            // 要改成按钮当前显示的反义，例如当前为椭圆，则单击后变为蝶形，对应item也要变成!equals(椭圆)
+            case R.id.type_headtype:
+                parameterItem.setTypeRound(!typeButton.getText().toString().equals(getString(R.string.headType_ellipse)));
+                applyButtonShowFromParamter();
+                break;
+            case R.id.type_nonstdard:
+                parameterItem.setNonStandard(!nonstdButton.getText().toString().equals(getString(R.string.nonstandardType_true)));
+                applyButtonShowFromParamter();
+                break;
             case R.id.type_saveConfiguration:
+                // 保存当前参数
                 saveCurrentParamter();
                 break;
             case R.id.type_importConfiguration:
+                // 显示保存参数列表
                 showSavedParameters();
                 break;
         }
@@ -92,11 +106,7 @@ public class TypeFragment extends Fragment implements Button.OnClickListener {
         public void onServiceConnected(ComponentName name, IBinder service) {
             ParameterServer.ParameterBinder parameterBinder = (ParameterServer.ParameterBinder) service;
             parameterServer = parameterBinder.getService();
-            typeSpinnerInit();
-            nonStdSpinnerInit();
             parameterItem = parameterServer.getParameterItem();
-//            BToast.success(getActivity().getApplicationContext()).animate(true)
-//                    .text("类型实时监测服务已开启").show();
         }
 
         @Override
@@ -105,56 +115,12 @@ public class TypeFragment extends Fragment implements Button.OnClickListener {
         }
     };
 
-    // 初始化封头类型的spinner，可实时保存到parameterItem
-    private void typeSpinnerInit() {
-        final List<String> typeList = new ArrayList<>();
-        typeList.add("椭圆");
-        typeList.add("蝶形");
-        typeSpinner.attachDataSource(typeList);
-        typeSpinner.setSelectedIndex(0);
-        typeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (position == 0) {
-                    parameterItem.setTypeRound(true);
-                }
-                else {
-                    parameterItem.setTypeRound(false);
-                }
-                parameterServer.setParameterItem(parameterItem);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-    }
-
-    // 初始化非标封头的spinner，可实时保存到parameterItem
-    public void nonStdSpinnerInit() {
-        final List<String> choiceList = new ArrayList<>();
-        choiceList.add(getString(R.string.falseText));
-        choiceList.add(getString(R.string.trueText));
-        nonStdSpinner.attachDataSource(choiceList);
-        nonStdSpinner.setSelectedIndex(0);
-        nonStdSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (position == 0) {
-                    parameterItem.setNonStandard(false);
-                }
-                else {
-                    parameterItem.setNonStandard(true);
-                }
-                parameterServer.setParameterItem(parameterItem);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
+    // 根据paramterItem中对应的值刷新按钮的显示
+    private void applyButtonShowFromParamter() {
+        typeButton.setText(parameterItem.isTypeRound()?
+                R.string.headType_ellipse:R.string.headType_butterfly);
+        nonstdButton.setText(parameterItem.isNonStandard()?
+                R.string.nonstandardType_true:R.string.nonstandardType_false);
     }
 
     // 保存的任务交给ParameterServer
@@ -164,20 +130,31 @@ public class TypeFragment extends Fragment implements Button.OnClickListener {
         }
     }
 
-    // 显示保存的参数及部分信息，包括时间、四个量度参数，及删除、应用按钮
+    // 显示保存的参数及部分信息，包括时间、形状、标准封头、四个量度参数，及删除、应用按钮
     private void showSavedParameters() {
         // 注意Dialog只能应用在Activity层面，后边的View也一样，不然无法创建窗口
         savedParameters = new Dialog(getActivity(), R.style.centerDialog);
         savedParameters.setCancelable(false);
-        savedParameters.setCanceledOnTouchOutside(false);
+        savedParameters.setCanceledOnTouchOutside(true);
         Window window = savedParameters.getWindow();
         window.setGravity(Gravity.BOTTOM);
         View view = View.inflate(getActivity(), R.layout.type_parametersdialog, null);
+        Button dialogTitleText = view.findViewById(R.id.import_type_title);
+        Button nothingToShow = view.findViewById(R.id.import_type_nothing1);
+        // 获取到参数列表
         parameterItemList = parameterServer.getSavedParameterItems();
         ListView parameterListView = view.findViewById(R.id.import_type_parameterListView);
-        SavedParameterListViewAdapter listViewAdapter = new SavedParameterListViewAdapter(getActivity(),
-                R.layout.type_parameterdialog_item, parameterItemList, onClickListener);
-        parameterListView.setAdapter(listViewAdapter);
+        // 如果获得了一个空的列表，则显示没有东西的提示，反之则正常显示，并告知有多少个参数
+        if (parameterItemList.size() != 0) {
+            dialogTitleText.setText(context.getString(R.string.type_import_title)+"("+"共"+parameterItemList.size()+"个"+")：");
+            SavedParameterListViewAdapter listViewAdapter = new SavedParameterListViewAdapter(getActivity(),
+                    R.layout.type_parameterdialog_item, parameterItemList, onClickListener);
+            parameterListView.setAdapter(listViewAdapter);
+        }
+        else {
+            parameterListView.setVisibility(View.INVISIBLE);
+            nothingToShow.setVisibility(View.VISIBLE);
+        }
         view.findViewById(R.id.type_import_cancel).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -189,13 +166,6 @@ public class TypeFragment extends Fragment implements Button.OnClickListener {
         savedParameters.show();
     }
 
-    // 应用因为选择了新的参数而导致的显示变化
-    // 但是这个好像没用
-    private void applyParameterChange() {
-        typeSpinner.setSelectedIndex(parameterItem.isTypeRound()?0:1);
-        nonStdSpinner.setSelectedIndex(parameterItem.isNonStandard()?1:0);
-    }
-
     // 给参数列表中的按钮设定监听
     private View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
@@ -203,18 +173,23 @@ public class TypeFragment extends Fragment implements Button.OnClickListener {
             // 获取位置position
             int position = Integer.valueOf(v.getTag().toString().substring(0, 1));
             if (v.getTag().toString().contains("del")) {
-                // _id是从1开始计数的
-                if (parameterServer.deleteSavedParameterItem(position+1)) {
-                    BToast.success(context).animate(true).text("删除成功").show();
+                // 删除的时候是置位，因此改变了中间项得到的position和实际的_id并不是对应的
+                // 前者是导出的未被删除的list中的position，后者则是全部的position，这样会导致删除错误
+                // 所以在item中加了一项Id，用来标记它在数据库中的实际位置，删除的时候直接提取即可
+                if (parameterServer.deleteSavedParameterItem(parameterItemList.get(position).getId())) {
+                    BToast.success(context).animate(true).text("删除成功，刷新列表").show();
                     // 刷新列表
                     savedParameters.dismiss();
                     showSavedParameters();
                 }
             }
             else if (v.getTag().toString().contains("apply")) {
+                // 单击应用之后，获取到指定位置的paramterItem，替换当前的item并传递到server中
                 parameterServer.setParameterItem(parameterItemList.get(position));
+                parameterItem = parameterServer.getParameterItem();
                 savedParameters.dismiss();
-                applyParameterChange();
+                // 应用变换
+                applyButtonShowFromParamter();
                 BToast.success(context).animate(true).text("应用成功").show();
             }
         }
@@ -222,6 +197,10 @@ public class TypeFragment extends Fragment implements Button.OnClickListener {
 
     @Override
     public void onDestroy() {
+        if (savedParameters != null && savedParameters.isShowing()) {
+            savedParameters.dismiss();
+            savedParameters = null;
+        }
         super.onDestroy();
         getActivity().getApplicationContext().unbindService(parameterServiceConnection);
     }

@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/fragmentHeight"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     android:background="@color/colorWhite" >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
         android:layout_marginStart="@dimen/dp_10"
         android:layout_marginEnd="@dimen/dp_10"
+        android:layout_gravity="center"
         android:orientation="horizontal" >
 
         <Button
@@ -145,11 +145,13 @@
         android:layout_marginEnd="10dp"
         android:orientation="horizontal" >
 
-        <CheckBox
-            android:id="@+id/parameter_ellipseDetectionCheckBox"
+        <Button
+            style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:layout_gravity="center"
+            android:enabled="false"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="@dimen/dp_10"
             android:text="@string/ellipseDetection"
@@ -157,23 +159,15 @@
             android:textSize="18sp"
             android:textAlignment="center"/>
 
-        <TextView
-            android:layout_width="1dp"
-            android:layout_height="wrap_content"
-            android:background="@color/colorBlack"
-            android:textSize="18sp"/>
-
-        <CheckBox
-            android:id="@+id/parameter_testdataCheckBox"
+        <Button
+            android:id="@+id/parameter_ellipseDetection"
+            style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="@dimen/dp_10"
-            android:text="@string/deleted"
             android:textColor="@color/colorBlack"
             android:textSize="18sp"
-            android:textAlignment="center"/>
+            android:text="@string/nonstandardType_true"/>
 
     </LinearLayout>
 

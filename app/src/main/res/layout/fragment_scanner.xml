@@ -17,20 +17,23 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:enabled="false"
             android:textAlignment="center"
-            android:text="@string/headTypeTitle"
+            android:text="@string/scanner_currentProgress"
             android:textColor="@color/colorBlack"
             android:textSize="18sp"/>
 
-        <Button
-            android:id="@+id/type_headtype"
-            style="@style/Widget.AppCompat.Button.Borderless"
+        <EditText
+            android:id="@+id/scanner_progressText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/headType_ellipse"
-            android:textSize="18sp"
-            android:textColor="@color/colorBlack"/>
+            android:enabled="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:hint="@string/scannerReady"
+            android:textSize="16sp"
+            android:textAlignment="center"/>
 
     </LinearLayout>
 
@@ -46,19 +49,22 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:enabled="false"
             android:textColor="@color/colorBlack"
-            android:text="@string/nonstandardType"
+            android:text="@string/scanner_currentD"
             android:textSize="18sp" />
 
-        <Button
-            android:id="@+id/type_nonstdard"
-            style="@style/Widget.AppCompat.Button.Borderless"
+        <EditText
+            android:id="@+id/scanner_distanceText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/nonstandardType_false"
-            android:textSize="18sp"
-            android:textColor="@color/colorBlack"/>
+            android:enabled="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:hint="@string/scannerReady"
+            android:textSize="16sp"
+            android:textAlignment="center"/>
 
     </LinearLayout>
 
@@ -75,19 +81,20 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:enabled="false"
             android:textSize="18sp"
             android:textColor="@color/colorBlack"
-            android:text="@string/concaveBias"/>
+            android:text="@string/scanner_currentA"/>
 
         <EditText
-            android:id="@+id/type_concaveInput"
+            android:id="@+id/scanner_angleText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:enabled="false"
             android:focusable="false"
             android:focusableInTouchMode="false"
-            android:hint="@string/concaveBiasHint"
+            android:hint="@string/scannerReady"
             android:textSize="16sp"
             android:textAlignment="center"/>
 
@@ -107,19 +114,20 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:enabled="false"
             android:textSize="18sp"
             android:textColor="@color/colorBlack"
-            android:text="@string/convexBias"/>
+            android:text="@string/scanner_currentXY"/>
 
         <EditText
-            android:id="@+id/type_convexInput"
+            android:id="@+id/scanner_coordinate"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:enabled="false"
             android:focusable="false"
             android:focusableInTouchMode="false"
-            android:hint="@string/convexBiasHint"
+            android:hint="@string/scannerReady"
             android:textSize="16sp"
             android:textAlignment="center"/>
 
@@ -133,33 +141,30 @@
         android:orientation="horizontal" >
 
         <Button
-            android:id="@+id/type_saveConfiguration"
+            android:id="@+id/scanner_startbutton"
             style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textSize="18sp"
-            android:textColor="@color/colorBlack"
-            android:text="@string/saveConfiguration"/>
+            android:text="@string/scannerStart"
+            android:textColor="@color/colorBlack"/>
 
         <TextView
             android:layout_width="1dp"
             android:layout_height="wrap_content"
             android:background="@color/colorBlack"
-            android:layout_gravity="center"
-            android:textSize="20sp" />
+            android:textSize="20sp"/>
 
         <Button
-            android:id="@+id/type_importConfiguration"
+            android:id="@+id/scanner_stopbutton"
             style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/clearConfiguration"
             android:textSize="18sp"
-            android:textColor="@color/colorBlack"
-            android:textAlignment="center"/>
-
+            android:text="@string/scannerStop"
+            android:textColor="@color/colorBlack"/>
     </LinearLayout>
 
 

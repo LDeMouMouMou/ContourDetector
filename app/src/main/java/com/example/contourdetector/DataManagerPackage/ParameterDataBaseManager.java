@@ -49,7 +49,7 @@ public class ParameterDataBaseManager {
         List<ParameterItem> parameterItemList = new ArrayList<>();
         // 游标
         Cursor c = db.query("parameter", null, null, null, null, null, null);
-        for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
+        for (c.moveToLast(); !c.isBeforeFirst(); c.moveToPrevious()) {
             if (!c.getString(11).equals("是")) {
                 String time = c.getString(1);
                 boolean type = c.getString(2).equals("椭圆");
@@ -63,6 +63,8 @@ public class ParameterDataBaseManager {
                 boolean ellipse = c.getString(10).equals("是");
                 ParameterItem parameterItem = new ParameterItem(time, concave, convex, diameter, curvedHeight, totalHeight,
                         padHeight, nonstd, type, ellipse, false);
+                // 添加用来标记实际位置的Id
+                parameterItem.setId(Integer.valueOf(c.getString(0)));
                 parameterItemList.add(parameterItem);
             }
         }
@@ -72,11 +74,10 @@ public class ParameterDataBaseManager {
 
     // 删除某一行的内容
     // 但是，由于删除之后自增长的id并不会自己更新，相当于留下了一个空行，这样会导致有的时候并不会真正地删除
-    // 因此我们并不需要真正地删除它，而是将deleted标志位置为true，这样读取的时候就不需要读进来
+    // 因此我们并不需要真正地删除它，而是将deleted标志位置为true，这样读取的时候就不会读进来
     public void deleteParameterItem(int position) {
         ContentValues contentValues = new ContentValues();
         contentValues.put("deleted", "是");
-//        db.execSQL("UPDATE parameter SET deleted = 是 WHERE _id = "+position);
         db.update("parameter", contentValues, "_id=?", new String[]{String.valueOf(position)});
     }
 

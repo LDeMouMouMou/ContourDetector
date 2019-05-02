@@ -5,7 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -19,6 +21,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 
+import com.example.contourdetector.MeaureSession.ConfigurationPart;
 import com.example.contourdetector.R;
 import com.example.contourdetector.ServicesPackage.ParameterServer;
 import com.example.contourdetector.SetterGetterPackage.ParameterItem;
@@ -38,7 +41,22 @@ public class ParameterFragment extends Fragment {
     private EditText curvedHeightInput;
     private EditText totalHeightInput;
     private EditText padHeightInput;
-    private CheckBox ellipseCheckBox;
+    private Button ellipseCheck;
+    private Handler handler;
+
+    // 使用handler来沟通fragment和activity
+    // 在onCreate中获取到目标activity中的handler
+    // 因为type中没有涉及到具体数值的改变，所以只需要在ParameterFragment中获取即可
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        ConfigurationPart configurationPart = (ConfigurationPart) getActivity();
+        handler = configurationPart.handler;
+        // 唤起显示预览
+        Message message = new Message();
+        message.obj = "PREVIEW INIT";
+        handler.sendMessage(message);
+    }
 
     @Nullable
     @Override
@@ -75,7 +93,7 @@ public class ParameterFragment extends Fragment {
         totalHeightInput = getActivity().findViewById(R.id.parameter_totalHeightInput);
         padHeightButton = getActivity().findViewById(R.id.parameter_padHeightButton);
         padHeightInput = getActivity().findViewById(R.id.parameter_padHeightInput);
-        ellipseCheckBox = getActivity().findViewById(R.id.parameter_ellipseDetectionCheckBox);
+        ellipseCheck = getActivity().findViewById(R.id.parameter_ellipseDetection);
     }
 
     // 根据新获得的parameterItem刷新参数内容
@@ -103,6 +121,9 @@ public class ParameterFragment extends Fragment {
             curvedHeightInput.setFocusable(true);
             curvedHeightInput.setFocusableInTouchMode(true);
         }
+        // 椭圆度的按钮文字也要更改
+        ellipseCheck.setText(parameterItem.isEllipseDetection()?
+                R.string.nonstandardType_true:R.string.nonstandardType_false);
     }
 
     private ServiceConnection parameterServiceConnection = new ServiceConnection() {
@@ -237,11 +258,18 @@ public class ParameterFragment extends Fragment {
                 parameterServer.setParameterItem(parameterItem);
             }
         });
-        ellipseCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        // 若显示为是，则单击后置为否，反之一样
+        ellipseCheck.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                parameterItem.setEllipseDetection(isChecked);
-                parameterServer.setParameterItem(parameterItem);
+            public void onClick(View v) {
+                if (ellipseCheck.getText().toString().equals(getString(R.string.nonstandardType_true))) {
+                    ellipseCheck.setText(R.string.nonstandardType_false);
+                    parameterItem.setEllipseDetection(false);
+                }
+                else {
+                    ellipseCheck.setText(R.string.nonstandardType_true);
+                    parameterItem.setEllipseDetection(true);
+                }
             }
         });
     }
