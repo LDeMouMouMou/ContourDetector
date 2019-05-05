@@ -116,6 +116,7 @@ public class DataPart extends AppCompatActivity implements Button.OnClickListene
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.backButton:
+                // 先保存数据
                 showExitSaveDialog();
                 break;
             case R.id.goButton:
@@ -298,7 +299,8 @@ public class DataPart extends AppCompatActivity implements Button.OnClickListene
     }
 
     // 退出时提示是否保存数据 -> 相当于"其他"中的输出
-    // 保存数据时可以保存为包含报告、参数、具体数据的Excel文件或者仅含有前两者的简单txt文件
+    // 可以选择保存到历史记录
+    // 也可以保存为包含报告、参数、具体数据的Excel文件或者仅含有前两者的简单txt文件
     // Excel有固定的格式，事实上在恢复的时候只需要参数(ParameterItem)和具体数据(DataItem)即可
     // 恢复时，只需要解析出Excel中的ParameterItem和D、X、Y、A(来自DataItem)就可以重新计算结果
     private void showExitSaveDialog() {
@@ -307,6 +309,14 @@ public class DataPart extends AppCompatActivity implements Button.OnClickListene
         exitDialog.setCanceledOnTouchOutside(true);
         Window window = exitDialog.getWindow();
         View view = View.inflate(DataPart.this, R.layout.data_exitdialog, null);
+        view.findViewById(R.id.exit_savehistory).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (parameterServer.saveCurrentRecordAsHistory()) {
+                    BToast.success(DataPart.this).text("保存成功").animate(true).show();
+                }
+            }
+        });
         view.findViewById(R.id.exit_excel).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

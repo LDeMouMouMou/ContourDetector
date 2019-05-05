@@ -44,11 +44,26 @@
         android:layout_height="1dp"
         android:background="@color/colorBlack"/>
 
-    <ListView
-        android:id="@+id/bluetoothListView"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:overScrollMode="always" >
-    </ListView>
+        android:layout_height="wrap_content">
+
+        <ListView
+            android:id="@+id/bondedListView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:overScrollMode="always" >
+        </ListView>
+
+        <ListView
+            android:id="@+id/foundedListView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:overScrollMode="always" >
+        </ListView>
+
+    </FrameLayout>
+
+
 
 </LinearLayout>

@@ -3,168 +3,141 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="@color/colorWhite">
+    android:background="@color/colorWhite" >
+
+    <Button
+        android:id="@+id/history_time"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:enabled="false"
+        android:text="@string/history_time"
+        android:textColor="@color/colorAccent"
+        android:textAlignment="center"
+        android:textSize="18sp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/dp_10"
-        android:layout_marginEnd="@dimen/dp_10"
-        android:orientation="horizontal">
-
-        <Button
-            style="@style/Widget.AppCompat.Button.Borderless"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:enabled="false"
-            android:textAlignment="center"
-            android:text="@string/headTypeTitle"
-            android:textColor="@color/colorBlack"
-            android:textSize="18sp"/>
-
-        <Button
-            android:id="@+id/type_headtype"
-            style="@style/Widget.AppCompat.Button.Borderless"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/headType_ellipse"
-            android:textSize="18sp"
-            android:textColor="@color/colorBlack"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/dp_10"
-        android:layout_marginEnd="@dimen/dp_10"
-        android:orientation="horizontal">
-
-        <Button
-            style="@style/Widget.AppCompat.Button.Borderless"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:enabled="false"
-            android:textColor="@color/colorBlack"
-            android:text="@string/nonstandardType"
-            android:textSize="18sp" />
-
-        <Button
-            android:id="@+id/type_nonstdard"
-            style="@style/Widget.AppCompat.Button.Borderless"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/nonstandardType_false"
-            android:textSize="18sp"
-            android:textColor="@color/colorBlack"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/dp_10"
-        android:layout_marginEnd="@dimen/dp_10"
         android:orientation="horizontal" >
 
         <Button
-            android:id="@+id/type_concaveButton"
+            android:id="@+id/history_qualified"
             style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:enabled="false"
-            android:textSize="18sp"
-            android:textColor="@color/colorBlack"
-            android:text="@string/concaveBias"/>
-
-        <EditText
-            android:id="@+id/type_concaveInput"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:enabled="false"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:hint="@string/concaveBiasHint"
-            android:textSize="16sp"
-            android:textAlignment="center"/>
-
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/dp_10"
-        android:layout_marginEnd="@dimen/dp_10"
-        android:orientation="horizontal" >
-
-        <Button
-            android:id="@+id/type_convexButton"
-            style="@style/Widget.AppCompat.Button.Borderless"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:enabled="false"
-            android:textSize="18sp"
-            android:textColor="@color/colorBlack"
-            android:text="@string/convexBias"/>
-
-        <EditText
-            android:id="@+id/type_convexInput"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:enabled="false"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:hint="@string/convexBiasHint"
-            android:textSize="16sp"
-            android:textAlignment="center"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/dp_10"
-        android:layout_marginEnd="@dimen/dp_10"
-        android:orientation="horizontal" >
-
-        <Button
-            android:id="@+id/type_saveConfiguration"
-            style="@style/Widget.AppCompat.Button.Borderless"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textSize="18sp"
-            android:textColor="@color/colorBlack"
-            android:text="@string/saveConfiguration"/>
+            android:textColor="@color/colorAccent"
+            android:textSize="16sp"/>
 
         <TextView
             android:layout_width="1dp"
             android:layout_height="wrap_content"
-            android:background="@color/colorBlack"
             android:layout_gravity="center"
-            android:textSize="20sp" />
+            android:background="@color/colorBlack"
+            android:textSize="20sp"/>
 
         <Button
-            android:id="@+id/type_importConfiguration"
+            android:id="@+id/history_nonstd"
             style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/clearConfiguration"
-            android:textSize="18sp"
+            android:enabled="false"
             android:textColor="@color/colorBlack"
-            android:textAlignment="center"/>
+            android:textSize="16sp"/>
 
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <Button
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:enabled="false"
+            android:textColor="@color/colorBlack"
+            android:textSize="16sp"
+            android:text="@string/condition_concaveMax"/>
+
+        <EditText
+            android:id="@+id/history_maxConcave"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textAlignment="center"
+            android:textSize="16sp"
+            android:enabled="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <Button
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:enabled="false"
+            android:textColor="@color/colorBlack"
+            android:textSize="16sp"
+            android:text="@string/condition_convexMax"/>
+
+        <EditText
+            android:id="@+id/history_maxConvex"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textAlignment="center"
+            android:textSize="16sp"
+            android:enabled="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/history_delete"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="18sp"
+            android:textColor="@color/colorBlack"
+            android:text="@string/history_delete"/>
+
+        <TextView
+            android:layout_width="1dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textSize="20sp"
+            android:background="@color/colorBlack"/>
+
+        <Button
+            android:id="@+id/history_open"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="18sp"
+            android:textColor="@color/colorBlack"
+            android:text="@string/history_open"/>
+
+    </LinearLayout>
 
 </LinearLayout>

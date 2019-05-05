@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.bravin.btoast.BToast;
 import com.example.contourdetector.MeaureSession.ConfigurationPart;
 import com.example.contourdetector.R;
 import com.example.contourdetector.ServicesPackage.BluetoothServer;
@@ -116,9 +117,16 @@ public class ScannerFragment extends Fragment {
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // 首先检查参数是否合法，若不合法回到参数设置界面
+                if (!parameterServer.getParamterInspectionResult()) {
+                    Message message = new Message();
+                    message.obj = "SWITCH FRAGMENT/2";
+                    handler.sendMessage(message);
+                    BToast.error(context).animate(true).text("参数有误").show();
+                }
                 // 表示进程从未启动过，这是按下开始则启动测量
                 // 使能isEnable并将开始按钮的文字变为"暂停测量"
-                if (scannerThread.getStatus() == AsyncTask.Status.PENDING) {
+                else if (scannerThread.getStatus() == AsyncTask.Status.PENDING) {
                     isEnable = true;
                     scannerThread.execute();
                     startButton.setText(R.string.scannerPause);
@@ -199,6 +207,7 @@ public class ScannerFragment extends Fragment {
         // 测量结束后修改两个按钮的文字，并将数据保存到paramterServer
         // 开始按钮变为不可用的"测量结束"，中止按钮变为"重新开始"
         // 将数据发送给parameterServer进行处理
+        // 告知activity测量已经结束，可以进入查看结果
         @Override
         protected void onPostExecute(String result) {
             startButton.setText(R.string.scannerFinished);
@@ -206,6 +215,9 @@ public class ScannerFragment extends Fragment {
             startButton.setTextColor(getResources().getColor(R.color.colorLightGray));
             stopButton.setText(R.string.scannerRestart);
             parameterServer.setAllDataList(D, X, Y, A);
+            Message message = new Message();
+            message.obj = "SCANNER FINISHED";
+            handler.sendMessage(message);
         }
 
         @Override

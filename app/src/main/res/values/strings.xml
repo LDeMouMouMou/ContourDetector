@@ -78,7 +78,8 @@
     <string name="report_qualified">合格</string>
     <string name="report_unqualified">不合格</string>
     <string name="dialog_hide">隐藏</string>
-    <string name="exit_title">即将退出，测量记录已保存，请选择：</string>
+    <string name="exit_title">即将退出，请选择：</string>
+    <string name="exit_save">保存到测量历史</string>
     <string name="exit_excel">将所有数据保存为Excel报表</string>
     <string name="exit_txt">将简要报告保存为txt文本文档</string>
     <string name="exit_nothing">不保存</string>
@@ -101,4 +102,9 @@
     <string name="import_item_checking">正在校验…</string>
     <string name="import_item_open">查看详细</string>
     <string name="import_item_invalid">校验失败</string>
+    <string name="history_title">以下为历史测量记录：</string>
+    <string name="history_time">记录保存时间：</string>
+    <string name="history_delete">删除记录</string>
+    <string name="history_open">查看详细</string>
+    <string name="history_nothing">无保存的测量记录</string>
 </resources>

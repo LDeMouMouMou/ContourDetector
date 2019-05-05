@@ -6,7 +6,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -22,6 +24,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 import com.bravin.btoast.BToast;
+import com.example.contourdetector.MeaureSession.ConfigurationPart;
 import com.example.contourdetector.R;
 import com.example.contourdetector.SelfDefinationViews.SavedParameterListViewAdapter;
 import com.example.contourdetector.ServicesPackage.ParameterServer;
@@ -40,13 +43,21 @@ public class TypeFragment extends Fragment implements Button.OnClickListener {
     private List<ParameterItem> parameterItemList;
     private Button typeButton;
     private Button nonstdButton;
-    private Button concaveButton;
-    private Button convexButton;
     private EditText concaveEditText;
     private EditText convexEditText;
+    private Handler handler;
     private Context context;
     private Dialog savedParameters;
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        ConfigurationPart configurationPart = (ConfigurationPart) getActivity();
+        handler = configurationPart.handler;
+        Message message = new Message();
+        message.obj = "PREVIEW INIT";
+        handler.sendMessage(message);
+    }
 
     @Nullable
     @Override
@@ -68,8 +79,6 @@ public class TypeFragment extends Fragment implements Button.OnClickListener {
         nonstdButton = getActivity().findViewById(R.id.type_nonstdard);
         typeButton.setOnClickListener(this);
         nonstdButton.setOnClickListener(this);
-        concaveButton = getActivity().findViewById(R.id.type_concaveButton);
-        convexButton = getActivity().findViewById(R.id.type_convexButton);
         concaveEditText = getActivity().findViewById(R.id.type_concaveInput);
         convexEditText = getActivity().findViewById(R.id.type_convexInput);
         // 这俩按钮只是调用相应的方法而已，就直接引用就好了
@@ -125,8 +134,17 @@ public class TypeFragment extends Fragment implements Button.OnClickListener {
 
     // 保存的任务交给ParameterServer
     private void saveCurrentParamter() {
-        if (parameterServer.saveCurrentParameterItem()) {
-            BToast.success(getContext()).animate(true).text("保存成功").show();
+        if (parameterServer.getParamterInspectionResult()) {
+            if (parameterServer.saveCurrentParameterItem()) {
+                BToast.success(getContext()).animate(true).text("保存成功").show();
+            }
+        }
+        // 出现错误时切换到参数界面
+        else {
+            Message message = new Message();
+            message.obj = "SWITCH FRAGMENT/2";
+            handler.sendMessage(message);
+            BToast.error(getContext()).animate(true).text("参数有误").show();
         }
     }
 

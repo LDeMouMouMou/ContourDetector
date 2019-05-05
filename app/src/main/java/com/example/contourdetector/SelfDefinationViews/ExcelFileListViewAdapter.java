@@ -34,7 +34,7 @@ public class ExcelFileListViewAdapter extends ArrayAdapter<FileListViewItem> {
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         FileListViewItem fileListViewItem = getItem(position);
-        View view = LayoutInflater.from(getContext()).inflate(resourceId, parent, false);
+        View view = LayoutInflater.from(context).inflate(resourceId, parent, false);
         Button fileName = view.findViewById(R.id.listview_filename);
         Button fileDelete = view.findViewById(R.id.listview_delete);
         Button fileOpen = view.findViewById(R.id.listview_open);

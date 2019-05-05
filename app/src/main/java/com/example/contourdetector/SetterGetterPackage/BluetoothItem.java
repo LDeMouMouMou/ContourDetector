@@ -4,14 +4,14 @@ public class BluetoothItem {
 
     private String bluetoothName;
     private String bluetoothAddress;
-    private boolean bluetoothConnected;
-    private boolean bluetoothPaired;
+    private int bluetoothConnectionState;
+    private int bluetoothBondState;
 
-    public BluetoothItem(String bluetoothName, String bluetoothAddress, boolean bluetoothConnected, boolean bluetoothPaired) {
+    public BluetoothItem(String bluetoothName, String bluetoothAddress, int bluetoothConnectionState, int bluetoothBondState) {
         this.bluetoothName = bluetoothName;
         this.bluetoothAddress = bluetoothAddress;
-        this.bluetoothConnected = bluetoothConnected;
-        this.bluetoothPaired = bluetoothPaired;
+        this.bluetoothConnectionState = bluetoothConnectionState;
+        this.bluetoothBondState = bluetoothBondState;
     }
 
     public String getBluetoothName() {
@@ -30,19 +30,19 @@ public class BluetoothItem {
         this.bluetoothAddress = bluetoothAddress;
     }
 
-    public boolean isBluetoothConnected() {
-        return bluetoothConnected;
+    public int getBluetoothConnectionState() {
+        return bluetoothConnectionState;
     }
 
-    public void setBluetoothConnected(boolean bluetoothConnected) {
-        this.bluetoothConnected = bluetoothConnected;
+    public void setBluetoothConnectionState(int bluetoothConnectionState) {
+        this.bluetoothConnectionState = bluetoothConnectionState;
     }
 
-    public boolean isBluetoothPaired() {
-        return bluetoothPaired;
+    public int getBluetoothBondState() {
+        return bluetoothBondState;
     }
 
-    public void setBluetoothPaired(boolean bluetoothPaired) {
-        this.bluetoothPaired = bluetoothPaired;
+    public void setBluetoothBondState(int bluetoothBondState) {
+        this.bluetoothBondState = bluetoothBondState;
     }
 }

@@ -29,9 +29,10 @@ public class DevicesFragment extends Fragment {
     private Button pairedDeviceList;
     private Button newDeviceList;
     private BluetoothServer bluetoothServer;
-    private ListView bluetoothListView;
-    private BluetoothListViewAdapter bluetoothListViewAdapter;
-    private List<BluetoothItem> bluetoothItemList;
+    private ListView bondedListView;
+    private ListView foundedListView;
+    private List<BluetoothItem> bondedItemList;
+    private List<BluetoothItem> foundedItemList;
 
     @Nullable
     @Override
@@ -63,7 +64,8 @@ public class DevicesFragment extends Fragment {
     private void findViewByIds() {
         pairedDeviceList = getActivity().findViewById(R.id.detection_pairedDeivceList);
         newDeviceList = getActivity().findViewById(R.id.detection_addNewDevice);
-        bluetoothListView = getActivity().findViewById(R.id.bluetoothListView);
+        bondedListView = getActivity().findViewById(R.id.bondedListView);
+        foundedListView = getActivity().findViewById(R.id.foundedListView);
     }
 
     private ServiceConnection bluetoothServiceConnection = new ServiceConnection() {
@@ -82,30 +84,47 @@ public class DevicesFragment extends Fragment {
         }
     };
 
+    // 配对设备列表
     private void initPairedDeviceListView() {
-        bluetoothItemList = bluetoothServer.getBondedDeviceItemList();
-        bluetoothListViewAdapter = new BluetoothListViewAdapter(getActivity().getApplicationContext(),
-                R.layout.fragment_devices_listviewitem, bluetoothItemList);
-        bluetoothListView.setAdapter(bluetoothListViewAdapter);
-        bluetoothListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        // 先隐藏另一个，显示当前需要的列表
+        bondedListView.setVisibility(View.VISIBLE);
+        foundedListView.setVisibility(View.INVISIBLE);
+        bondedItemList = bluetoothServer.getBondedDeviceItemList();
+        final BluetoothListViewAdapter bondedBluetoothListViewAdapter = new BluetoothListViewAdapter(getActivity().getApplicationContext(),
+                R.layout.fragment_devices_listviewitem, bondedItemList);
+        bondedListView.setAdapter(bondedBluetoothListViewAdapter);
+        bondedListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (bluetoothServer.connectSeletectedDevice(bluetoothItemList.get(position).getBluetoothAddress()) == 1) {
+                if (bluetoothServer.connectSeletectedDevice(bondedItemList.get(position).getBluetoothAddress()) == 1) {
                     BToast.info(getActivity().getApplicationContext())
-                            .text("正在尝试连接" + bluetoothItemList.get(position).getBluetoothName() + "...")
+                            .text("正在尝试连接" + bondedItemList.get(position).getBluetoothName() + "...")
                             .animate(true).show();
-                    bluetoothItemList.get(position).setBluetoothConnected(true);
+                    bondedItemList.get(position).setBluetoothConnectionState(1);
                 }
                 else {
-                    bluetoothItemList.get(position).setBluetoothConnected(false);
+                    bondedItemList.get(position).setBluetoothConnectionState(0);
                 }
-                bluetoothListViewAdapter.notifyDataSetChanged();
+                bondedBluetoothListViewAdapter.notifyDataSetChanged();
             }
         });
     }
 
+    // 未配对设备列表（周围发现的未配对设备）
     private void initNewDeviceListView() {
-
+        bondedListView.setVisibility(View.INVISIBLE);
+        foundedListView.setVisibility(View.VISIBLE);
+        foundedItemList = bluetoothServer.getNewBluetoothDevice();
+        final BluetoothListViewAdapter foundedBluetoothListViewAdapter = new BluetoothListViewAdapter(getActivity().getApplicationContext(),
+                R.layout.fragment_devices_listviewitem, foundedItemList);
+        foundedListView.setAdapter(foundedBluetoothListViewAdapter);
+        foundedListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                bluetoothServer.pairSeletecedDevice(foundedItemList.get(position).getBluetoothAddress());
+                foundedBluetoothListViewAdapter.notifyDataSetChanged();
+            }
+        });
     }
 
     @Override

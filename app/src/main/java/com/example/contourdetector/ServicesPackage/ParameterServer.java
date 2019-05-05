@@ -7,10 +7,12 @@ import android.os.Environment;
 import android.os.IBinder;
 import android.text.format.DateFormat;
 
+import com.example.contourdetector.DataManagerPackage.HistoryExcelSaverManager;
 import com.example.contourdetector.DataManagerPackage.ParameterDataBaseManager;
 import com.example.contourdetector.DataManagerPackage.ExcelUtil;
 import com.example.contourdetector.SetterGetterPackage.BiasListViewItem;
 import com.example.contourdetector.SetterGetterPackage.DataItem;
+import com.example.contourdetector.SetterGetterPackage.HistoryItem;
 import com.example.contourdetector.SetterGetterPackage.ParameterItem;
 import com.example.contourdetector.SetterGetterPackage.ResultItem;
 
@@ -41,6 +43,7 @@ public class ParameterServer extends Service {
     private ResultItem resultItem;
     private DataItem dataItem;
     private ExcelUtil excelUtil;
+    private HistoryExcelSaverManager historyExcelSaverManager;
     // SQLite数据库相关
     private ParameterDataBaseManager parameterDataBaseManager;
 
@@ -61,20 +64,20 @@ public class ParameterServer extends Service {
         // 其他均为空，这也是判断某个参数是否为空的依据
         // 事实上，可以为空的只有四个参数值（内凹/外凸为固定值，不可随意修改），将其设为-1即可
         parameterItem = new ParameterItem(null, 10, 20, -1, -1,
-                -1, -1, false, true, false, false);
+                -1, 0, false, true, false, false);
         resultItem = new ResultItem();
         resultItem.setMaxDepth(-1);
         dataItem = new DataItem();
         excelUtil = new ExcelUtil();
         parameterDataBaseManager = new ParameterDataBaseManager();
         parameterDataBaseManager.initDataBase(this);
+        historyExcelSaverManager = new HistoryExcelSaverManager(getApplicationContext());
         super.onCreate();
     }
 
     // 保存参数，以保存的时间作为开头（除主键外的第一项）
     public boolean saveCurrentParameterItem() {
         Calendar calendar = Calendar.getInstance();
-        // 换成百分号是为了SQLite代码能够正常执行，:/_/#等都会被认为是命令，导致错误
         String saveTime = DateFormat.format("yyyy-MM-dd-kk:mm:ss", calendar.getTime()).toString();
         parameterItem.setTime(saveTime);
         parameterDataBaseManager.addOneParameterRecordLine(parameterItem);
@@ -92,7 +95,15 @@ public class ParameterServer extends Service {
         return true;
     }
 
+    // 检查参数是否符合要求，是否已经填入（还是-1）
+    // 曲面高度不能大于总高，否则底部的高度就是负值了
     public boolean getParamterInspectionResult() {
+        if (parameterItem.getInsideDiameter() == -1 || parameterItem.getCurvedHeight() == -1 || parameterItem.getTotalHeight() == -1) {
+            return false;
+        }
+        else if (parameterItem.getCurvedHeight() > parameterItem.getTotalHeight()) {
+            return false;
+        }
         return true;
     }
 
@@ -216,6 +227,54 @@ public class ParameterServer extends Service {
         return biasListViewItemList;
     }
 
+    // 保存当前的测量记录
+    // 保存的时候填入DAXY四个列表，加上参数即可，之后利用这些就能复原
+    public boolean saveCurrentRecordAsHistory() {
+        HistoryItem historyItem = new HistoryItem();
+        // 这些是内部信息
+        historyItem.setD(listD);
+        historyItem.setA(listA);
+        historyItem.setX(listX);
+        historyItem.setY(listY);
+        historyItem.setParameterItem(parameterItem);
+        // 这些是表面信息
+        Calendar calendar = Calendar.getInstance();
+        historyItem.setTime(DateFormat.format("yyyy-MM-dd_kk:mm:ss", calendar.getTime()).toString());
+        historyItem.setQualified(resultItem.isQualified() ? "合格" : "不合格");
+        historyItem.setType(parameterItem.isNonStandard() ? "非标" : "标准" + (parameterItem.isTypeRound() ? "椭圆" : "蝶形"));
+        historyItem.setMaxConcave(resultItem.getMaxConcaveBias());
+        historyItem.setMaxConvex(resultItem.getMaxConvexBias());
+        historyExcelSaverManager.writeHistoryItemToExcelWorkBook(historyItem);
+        return true;
+    }
+
+    // 获取HistoryItemList
+    public List<HistoryItem> getHistoryItemList() {
+        return historyExcelSaverManager.getSavedHistoryItemList();
+    }
+
+    // 删除指定位置的History记录(文件)
+    public boolean deleteHistoryItem(String filePath) {
+        File file = new File(filePath);
+        if (file.exists()) {
+            return file.delete();
+        }
+        else {
+            return false;
+        }
+    }
+
+    // 导入History的数据，准备呈现到DataPart
+    public void setHistoryItemAsCurrent(HistoryItem historyItem) {
+        parameterItem = historyItem.getParameterItem();
+        listD = historyItem.getD();
+        listA = historyItem.getA();
+        listX = historyItem.getX();
+        listY = historyItem.getY();
+        // 和导入一样，这个数据是已经经过坐标变换的，不需要set
+        applyResultAlgorithm();
+    }
+
     // 准备数据，创建Excel工作表文件
     public boolean createExcelSavingFile() {
         // 写入所有的D、A、X、Y、内凹、外凸偏差的值
@@ -298,7 +357,7 @@ public class ParameterServer extends Service {
     }
 
     // 删除指定路径的文件
-    public boolean delteExistedExcelFile(String filePath) {
+    public boolean deleteExistedExcelFile(String filePath) {
         File file = new File(filePath);
         if (file.exists()) {
             return file.delete();

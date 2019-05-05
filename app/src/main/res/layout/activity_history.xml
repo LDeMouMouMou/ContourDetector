@@ -7,4 +7,42 @@
 
     <include layout="@layout/headtitle_universal" />
 
+    <Button
+        android:id="@+id/hitstory_title"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:enabled="false"
+        android:textSize="18sp"
+        android:textColor="@color/colorBlack"
+        android:text="@string/history_title"/>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Button
+            android:id="@+id/history_nothing"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:enabled="false"
+            android:visibility="invisible"
+            android:textSize="20sp"
+            android:textColor="@color/colorLightGray"
+            android:text="@string/history_nothing"/>
+
+        <ListView
+            android:id="@+id/history_listview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:overScrollMode="always"
+            android:overScrollHeader="@color/colorWhite"
+            android:overScrollFooter="@color/colorWhite">
+        </ListView>
+
+    </FrameLayout>
+
+
+
 </LinearLayout>

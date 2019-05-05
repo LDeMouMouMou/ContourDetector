@@ -21,6 +21,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 
+import com.bravin.btoast.BToast;
 import com.example.contourdetector.MeaureSession.ConfigurationPart;
 import com.example.contourdetector.R;
 import com.example.contourdetector.ServicesPackage.ParameterServer;
@@ -33,10 +34,6 @@ public class ParameterFragment extends Fragment {
 
     private ParameterServer parameterServer;
     private ParameterItem parameterItem;
-    private Button insideRadiusButton;
-    private Button curvedHeightButton;
-    private Button totalHeightButton;
-    private Button padHeightButton;
     private EditText insideDiameterInput;
     private EditText curvedHeightInput;
     private EditText totalHeightInput;
@@ -85,13 +82,9 @@ public class ParameterFragment extends Fragment {
     }
 
     private void findViewByIds() {
-        insideRadiusButton = getActivity().findViewById(R.id.parameter_insideRadiusButton);
         insideDiameterInput = getActivity().findViewById(R.id.parameter_insideRadiusInput);
-        curvedHeightButton = getActivity().findViewById(R.id.parameter_curvedHeightButton);
         curvedHeightInput = getActivity().findViewById(R.id.parameter_curvedHeightInput);
-        totalHeightButton = getActivity().findViewById(R.id.parameter_totalHeightButton);
         totalHeightInput = getActivity().findViewById(R.id.parameter_totalHeightInput);
-        padHeightButton = getActivity().findViewById(R.id.parameter_padHeightButton);
         padHeightInput = getActivity().findViewById(R.id.parameter_padHeightInput);
         ellipseCheck = getActivity().findViewById(R.id.parameter_ellipseDetection);
     }
@@ -146,6 +139,8 @@ public class ParameterFragment extends Fragment {
 
     // 给四个EditText添加监听，可以做到空白内容实时监测，同时对于封头内径和曲面高度也可以联动（标准封头）
     // 最重要的是，保存到parameterItem后，可以实现实时画预览图
+    // 使用handler传递参数，在activity中画出预览图
+    // 因为退格的时候会出现2.这种无法转换的情况，所以要捕获异常，避免崩溃
     private void initInputWatcher() {
         insideDiameterInput.addTextChangedListener(new TextWatcher() {
             @Override
@@ -160,24 +155,30 @@ public class ParameterFragment extends Fragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-                // 当封头为标准封头时，曲面高度=封头内径，前者要随着后者的输入而更改
-                String insideRadiusInputText = insideDiameterInput.getText().toString();
-                if (!isNullEmptyBlank(insideRadiusInputText)) {
-                    insideDiameterInput.setBackgroundResource(R.color.colorWhite);
-                    parameterItem.setInsideDiameter(Float.parseFloat(insideRadiusInputText));
-                    if (!parameterItem.isNonStandard()) {
-                        curvedHeightInput.setText(insideRadiusInputText);
-                        parameterItem.setCurvedHeight(Float.parseFloat(insideRadiusInputText));
+                // 当封头为标准封头时，曲面高度=封头内径/2，前者要随着后者的输入而更改
+                try {
+                    String insideRadiusInputText = insideDiameterInput.getText().toString();
+                    if (!isNullEmptyBlank(insideRadiusInputText)) {
+                        insideDiameterInput.setBackgroundResource(R.color.colorWhite);
+                        parameterItem.setInsideDiameter(Float.parseFloat(insideRadiusInputText));
+                        if (!parameterItem.isNonStandard()) {
+                            float curvedHeightNumber = Float.valueOf(insideRadiusInputText)/2;
+                            curvedHeightInput.setText(String.valueOf(curvedHeightNumber));
+                            parameterItem.setCurvedHeight(curvedHeightNumber);
+                        }
+                        sendParameterForPreview();
                     }
-                }
-                else {
-                    insideDiameterInput.setError("参数不可为空", null);
-                    insideDiameterInput.setBackgroundResource(R.drawable.errortextbackground);
-                    if (!parameterItem.isNonStandard()) {
-                        curvedHeightInput.setText("");
+                    else {
+                        parameterItem.setInsideDiameter(-1);
+                        insideDiameterInput.setError("参数不可为空", null);
+                        insideDiameterInput.setBackgroundResource(R.drawable.errortextbackground);
+                        if (!parameterItem.isNonStandard()) {
+                            curvedHeightInput.setText("");
+                        }
                     }
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
                 }
-                parameterServer.setParameterItem(parameterItem);
             }
         });
         curvedHeightInput.addTextChangedListener(new TextWatcher() {
@@ -195,16 +196,21 @@ public class ParameterFragment extends Fragment {
             public void afterTextChanged(Editable s) {
                 // 只有为非标准封头时，曲面高度才能输入，才需要实时监测
                 // 不加此判断条件会出现参数不可为空的错误
-                String curvedHeightInputText = curvedHeightInput.getText().toString();
-                if (parameterItem.isNonStandard()) {
-                    if (!isNullEmptyBlank(curvedHeightInputText)) {
-                        curvedHeightInput.setBackgroundResource(R.color.colorWhite);
-                        parameterItem.setCurvedHeight(Float.parseFloat(curvedHeightInputText));
-                    } else {
-                        curvedHeightInput.setError("参数不可为空", null);
-                        curvedHeightInput.setBackgroundResource(R.drawable.errortextbackground);
+                try {
+                    String curvedHeightInputText = curvedHeightInput.getText().toString();
+                    if (parameterItem.isNonStandard()) {
+                        if (!isNullEmptyBlank(curvedHeightInputText)) {
+                            curvedHeightInput.setBackgroundResource(R.color.colorWhite);
+                            parameterItem.setCurvedHeight(Float.parseFloat(curvedHeightInputText));
+                            sendParameterForPreview();
+                        } else {
+                            parameterItem.setCurvedHeight(-1);
+                            curvedHeightInput.setError("参数不可为空", null);
+                            curvedHeightInput.setBackgroundResource(R.drawable.errortextbackground);
+                        }
                     }
-                    parameterServer.setParameterItem(parameterItem);
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
                 }
             }
         });
@@ -221,18 +227,24 @@ public class ParameterFragment extends Fragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-                String totalHeightInputText = totalHeightInput.getText().toString();
-                if (!isNullEmptyBlank(totalHeightInputText)) {
-                    totalHeightInput.setBackgroundResource(R.color.colorWhite);
-                    parameterItem.setTotalHeight(Float.parseFloat(totalHeightInputText));
+                try {
+                    String totalHeightInputText = totalHeightInput.getText().toString();
+                    if (!isNullEmptyBlank(totalHeightInputText)) {
+                        totalHeightInput.setBackgroundResource(R.color.colorWhite);
+                        parameterItem.setTotalHeight(Float.parseFloat(totalHeightInputText));
+                        sendParameterForPreview();
+                    }
+                    else {
+                        parameterItem.setTotalHeight(-1);
+                        totalHeightInput.setError("参数不可为空", null);
+                        totalHeightInput.setBackgroundResource(R.drawable.errortextbackground);
+                    }
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
                 }
-                else {
-                    totalHeightInput.setError("参数不可为空", null);
-                    totalHeightInput.setBackgroundResource(R.drawable.errortextbackground);
-                }
-                parameterServer.setParameterItem(parameterItem);
             }
         });
+        // 垫块高度不填默认为0
         padHeightInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -246,16 +258,19 @@ public class ParameterFragment extends Fragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-                String padHeightInputText = padHeightInput.getText().toString();
-                if (!isNullEmptyBlank(padHeightInputText)) {
-                    padHeightInput.setBackgroundResource(R.color.colorWhite);
-                    parameterItem.setPadHeight(Float.parseFloat(padHeightInputText));
+                try {
+                    String padHeightInputText = padHeightInput.getText().toString();
+                    if (!isNullEmptyBlank(padHeightInputText)) {
+                        padHeightInput.setBackgroundResource(R.color.colorWhite);
+                        parameterItem.setPadHeight(Float.parseFloat(padHeightInputText));
+                        sendParameterForPreview();
+                    }
+                    else {
+                        parameterItem.setPadHeight(0);
+                    }
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
                 }
-                else {
-                    padHeightInput.setError("参数不可为空", null);
-                    padHeightInput.setBackgroundResource(R.drawable.errortextbackground);
-                }
-                parameterServer.setParameterItem(parameterItem);
             }
         });
         // 若显示为是，则单击后置为否，反之一样
@@ -270,9 +285,31 @@ public class ParameterFragment extends Fragment {
                     ellipseCheck.setText(R.string.nonstandardType_true);
                     parameterItem.setEllipseDetection(true);
                 }
+                sendParameterForPreview();
             }
         });
     }
+
+    // 在这里提取parameterItem中的参数，并通过handler传递到activity
+    // 同时兼具参数检测功能，对于异常情况予以纠正，通过后保存到parameterServer
+    // 更改了任一edittext之后就需要调用该方法
+    private void sendParameterForPreview() {
+        if (parameterServer.getParamterInspectionResult()) {
+            parameterServer.setParameterItem(parameterItem);
+            float diameter = parameterItem.getInsideDiameter();
+            float curvedheight = parameterItem.getCurvedHeight();
+            float totalheight = parameterItem.getTotalHeight();
+            float padheight = parameterItem.getPadHeight();
+            Message message = new Message();
+            message.obj = "PREVIEW UPDATE/" + diameter + "#" + curvedheight +
+                    "*" + totalheight + "$" + padheight;
+            handler.sendMessage(message);
+        }
+//        else {
+//            BToast.error(getContext()).text("参数有误，请检查").show();
+//        }
+    }
+
 
     @Contract("null -> true")
     private boolean isNullEmptyBlank(String str){

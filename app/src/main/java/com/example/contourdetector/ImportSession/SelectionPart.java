@@ -10,7 +10,6 @@ import android.os.Environment;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -170,7 +169,7 @@ public class SelectionPart extends AppCompatActivity {
                     + "/" + fileListViewItemList.get(position).getFileName();
             // 表示点击了"删除文件"按钮
             if (v.getTag().toString().contains("del")) {
-                if (parameterServer.delteExistedExcelFile(filePath)) {
+                if (parameterServer.deleteExistedExcelFile(filePath)) {
                     BToast.success(SelectionPart.this).animate(true).text("删除文件成功").show();
                     showAllExcelFilesInDownload();
                 }

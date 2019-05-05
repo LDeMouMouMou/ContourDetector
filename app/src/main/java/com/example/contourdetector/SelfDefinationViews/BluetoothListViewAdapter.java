@@ -30,14 +30,18 @@ public class BluetoothListViewAdapter extends ArrayAdapter<BluetoothItem> {
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         BluetoothItem bluetoothItem = getItem(position);
-        View view = LayoutInflater.from(getContext()).inflate(resourceId, parent, false);
+        View view = LayoutInflater.from(context).inflate(resourceId, parent, false);
         TextView nameText = view.findViewById(R.id.bluetoothListView_name);
         TextView addressText = view.findViewById(R.id.bluetoothListView_address);
         nameText.setText(bluetoothItem.getBluetoothName());
         addressText.setText(bluetoothItem.getBluetoothAddress());
-        if (bluetoothItem.isBluetoothConnected() || bluetoothItem.isBluetoothPaired()) {
+        if (bluetoothItem.getBluetoothConnectionState()==2 || bluetoothItem.getBluetoothBondState()==2) {
             nameText.setTypeface(Typeface.DEFAULT_BOLD);
             addressText.setTypeface(Typeface.DEFAULT_BOLD);
+        }
+        else {
+            nameText.setTypeface(Typeface.DEFAULT);
+            addressText.setTypeface(Typeface.DEFAULT);
         }
         return view;
     }
