@@ -185,6 +185,7 @@ public class ConfigurationPart extends AppCompatActivity {
                 }
                 // 扫描得到的新数据，判断标志位位置，分离出X、Y值，执行绘图命令
                 else if (messageContent.contains("SCANNER UPDATE")) {
+                    headtitleTextView.setText("测量中");
                     float x = Float.valueOf(messageContent.substring(messageContent.indexOf("/")+1,
                             messageContent.indexOf("#")));
                     float y = Float.valueOf(messageContent.substring(messageContent.indexOf("#")+1));
@@ -266,7 +267,7 @@ public class ConfigurationPart extends AppCompatActivity {
 
         // 设置X轴
         Axis axisX = new Axis();
-        axisX.setHasTiltedLabels(true).setTextColor(Color.BLACK).setHasLines(true).setInside(true);
+        axisX.setHasTiltedLabels(false).setTextColor(Color.BLACK).setHasLines(true).setInside(true);
         data.setAxisXBottom(axisX);
         // 设置Y轴
         Axis axisY = new Axis();
@@ -286,7 +287,7 @@ public class ConfigurationPart extends AppCompatActivity {
         v.left = -diameter/2*1.2f;
         v.right = diameter/2*1.2f;
         v.top = padheight+totalheight*1.2f;
-        v.bottom = -2;
+        v.bottom = -4;
         lineChartView.setMaximumViewport(v);
         lineChartView.setCurrentViewport(v);
         lineChartView.startDataAnimation();
@@ -305,7 +306,7 @@ public class ConfigurationPart extends AppCompatActivity {
         Line line = new Line(pointValues).setColor(Color.parseColor("#FFCD41"));
         line.setShape(ValueShape.CIRCLE);
         line.setCubic(true);
-        line.setPointRadius(2);
+        line.setPointRadius(1);
         line.setFilled(false);
         line.setHasLabels(false);
         line.setHasLabelsOnlyForSelected(true);
@@ -342,10 +343,10 @@ public class ConfigurationPart extends AppCompatActivity {
         // 设置视图，放大20%，保证图线边缘留空
         lineChartView.setViewportCalculationEnabled(false);
         Viewport v = new Viewport(lineChartView.getMaximumViewport());
-        v.left = Collections.min(X) * 1.2f;
-        v.right = Collections.max(X) * 1.2f;
-        v.top = Collections.max(Y) * 1.2f;
-        v.bottom = Collections.min(Y) * 1.2f;
+        v.left = Collections.min(X) - (float) (Math.abs(Collections.min(X)) * 0.2);
+        v.right = Collections.max(X) + (float) (Math.abs(Collections.max(X)) * 0.2);
+        v.top = Collections.max(Y) + (float) (Math.abs(Collections.max(Y) * 0.2));
+        v.bottom = Collections.min(Y) - (float) (Math.abs(Collections.min(Y) * 0.2));
         lineChartView.setMaximumViewport(v);
         lineChartView.setCurrentViewport(v);
         lineChartView.startDataAnimation();

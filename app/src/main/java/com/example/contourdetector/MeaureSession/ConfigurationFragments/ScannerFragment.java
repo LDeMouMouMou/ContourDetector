@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.hardware.camera2.params.BlackLevelPattern;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -26,6 +27,7 @@ import com.example.contourdetector.ServicesPackage.ParameterServer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class ScannerFragment extends Fragment {
 
@@ -197,6 +199,9 @@ public class ScannerFragment extends Fragment {
             Message message = new Message();
             message.obj = "SCANNER INIT/";
             handler.sendMessage(message);
+            bluetoothServer.initSimulation(parameterServer.getParameterItem().getInsideDiameter(),
+                    parameterServer.getParameterItem().getTotalHeight(),
+                    parameterServer.getParameterItem().getCurvedHeight());
         }
 
         @Override
@@ -222,12 +227,13 @@ public class ScannerFragment extends Fragment {
 
         @Override
         protected String doInBackground(String... params) {
-            // 180度内的测量点数
-            final int totalCount = 20;
+            // 180度内的测量点数(+1)
+            final int totalCount = 180;
             int i = 0;
             while (i <= totalCount && !scannerThread.isCancelled()) {
                 if (isEnable) {
-                    float receivedDistance = (float) 10.0;
+                    float receivedDistance = bluetoothServer.getDistanceFromPosition(i) +
+                            (float) (-0.1 + Math.random()*0.2);
                     float receivedAngle = (float) (180.0 / totalCount * i);
                     float progressPercent = (float) (i * 100 / totalCount);
                     // 根据投影变换计算得到坐标

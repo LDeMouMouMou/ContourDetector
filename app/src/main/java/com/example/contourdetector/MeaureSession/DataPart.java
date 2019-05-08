@@ -88,7 +88,7 @@ public class DataPart extends AppCompatActivity implements Button.OnClickListene
         backButton.setVisibility(View.VISIBLE);
         backButton.setOnClickListener(this);
         // reportButton要换成info的图标
-        reportButton.setBackgroundResource(R.drawable.buttton_info);
+        reportButton.setBackgroundResource(R.drawable.button_info);
         reportButton.setVisibility(View.VISIBLE);
         reportButton.setOnClickListener(this);
     }

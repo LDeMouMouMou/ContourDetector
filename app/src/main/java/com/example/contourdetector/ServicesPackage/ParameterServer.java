@@ -138,39 +138,49 @@ public class ParameterServer extends Service {
     // 在椭圆段的标准值比较复杂，需要用几何坐标解出
     // 然后计算得到偏差值，求出最大值，比较得到形状是否合格，之后可以计算椭圆度
     public void applyResultAlgorithm() {
+        // 计算深度
+        resultItem.setMaxDepth(Collections.max(listY));
         // 这里的ConvexBias/ConvexBias的元素都是add进去的，所以在计算时要重置
         // 不然就越开越多了
         ConcaveBias = new ArrayList<>();
         ConvexBias = new ArrayList<>();
         // 坐标修改完毕后，遍历整个距离列表D，取得内凹/外凸偏差的列表及最大值
-        for (int i = 0; i < listD.size(); i++) {
-            float standardInLine = parameterItem.getInsideDiameter();
-            float standardInEllipse = (float) (Math.sin(listA.get(i)*Math.PI/180.0)*
-                    (parameterItem.getTotalHeight()-parameterItem.getCurvedHeight())+
-                    Math.sqrt(parameterItem.getInsideDiameter()*parameterItem.getInsideDiameter()-
-                            Math.pow((parameterItem.getTotalHeight()-parameterItem.getCurvedHeight()), 2)*Math.pow(
-                                    Math.cos(listA.get(i)*Math.PI/180.0), 2)));
-            if (listY.get(i) <= parameterItem.getTotalHeight() && listY.get(i) >= parameterItem.getCurvedHeight()) {
-                // 大于0则为外凸偏差，反之则为内凹偏差
-                // 虽然每个点只能对应一种偏差，但是另一种偏差还是要加上0，保证数据形式一致性
-                if (listD.get(i) - standardInLine > 0) {
-                    ConvexBias.add(listD.get(i) - standardInLine);
-                    ConcaveBias.add((float) 0);
-                }
-                else {
-                    ConcaveBias.add(standardInLine - listD.get(i));
-                    ConvexBias.add((float) 0);
-                }
+        float D = parameterItem.getInsideDiameter();
+        float hi = parameterItem.getCurvedHeight();
+        float H = parameterItem.getTotalHeight();
+        float h = H - hi;
+        for (int i = 0; i < listA.size(); i++) {
+            // 当前角度的弧度值
+            float angle = (float) (Math.PI*listA.get(i)/180.0);
+            // 直线段的标准长度
+            float standardInLine_right = (float) (D/2/Math.cos(angle));
+            float standardInLine_left = (float) (D/2/Math.cos(Math.PI - angle));
+            // 圆弧段的标准长度
+            float standardInEllipse = (float) (h*Math.sin(angle)+Math.sqrt(D*D/4-h*h*Math.cos(angle)*Math.cos(angle)));
+            // 圆和直线段的交接点相对原点的角度1（右侧）
+            final float angle_roundStart = (float) (Math.atan2(2*(H-hi), D));
+            // 左侧
+            final float angle_roundEnd = (float) (Math.PI-angle_roundStart);
+            // 当前使用的标准长度值
+            float currentStandard;
+            if (angle <= angle_roundStart) {
+                currentStandard = standardInLine_right;
+            }
+            else if (angle >= angle_roundEnd) {
+                currentStandard = standardInLine_left;
             }
             else {
-                if (listD.get(i) - parameterItem.getInsideDiameter() > 0) {
-                    ConvexBias.add(listD.get(i) - standardInEllipse);
-                    ConcaveBias.add((float) 0);
-                }
-                else {
-                    ConcaveBias.add(standardInEllipse - listD.get(i));
-                    ConvexBias.add((float) 0);
-                }
+                currentStandard = standardInEllipse;
+            }
+            // 大于0则为外凸偏差，反之则为内凹偏差
+            // 虽然每个点只能对应一种偏差，但是另一种偏差还是要加上0，保证数据形式一致性
+            if (listD.get(i) - currentStandard > 0) {
+                ConvexBias.add(listD.get(i) - currentStandard);
+                ConcaveBias.add((float) 0);
+            }
+            else {
+                ConcaveBias.add(currentStandard - listD.get(i));
+                ConvexBias.add((float) 0);
             }
         }
         // 这里填入最大外凸/内凹偏差以及对应的坐标

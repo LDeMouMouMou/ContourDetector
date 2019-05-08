@@ -35,6 +35,8 @@ public class BluetoothServer extends Service {
     private BroadcastReceiver blutoothReceiver;
     private List<BluetoothItem> bondedBluetoothDevice = new ArrayList<>();
     private List<BluetoothItem> newBluetoothDevice = new ArrayList<>();
+    // 模拟数据距离
+    private List<Float> S_D = new ArrayList<>();
 
     public class BluetoothBinder extends Binder {
         public BluetoothServer getService() {
@@ -235,6 +237,39 @@ public class BluetoothServer extends Service {
             }
         }
         return bluetoothItemList;
+    }
+
+    // 模拟测量，给定参数，产生随机距离数据
+    // 一般产生181个（180度，分辨率为1度）距离数据，根据scanner传入的position返回距离值
+    // 根据内径、曲面高、总高产生
+    public void initSimulation(float D, float H, float hi) {
+        // 圆和直线段的交接点相对原点的角度1（右侧）
+        final float angle_roundStart = (float) (Math.atan2(2*(H-hi), D));
+        // 左侧
+        final float angle_roundEnd = (float) (Math.PI-angle_roundStart);
+        // 根据角度(i)确定标准距离
+        for (float i = 0; i <= Math.PI; i += Math.PI/180.0) {
+            if (i <= angle_roundStart) {
+                S_D.add((float) (D/2/Math.cos(i)));
+            }
+            else if (i > angle_roundStart && i <= angle_roundEnd) {
+                float h = H - hi;
+                if (D/2 == hi) {
+                    S_D.add((float) (h*Math.sin(i)+Math.sqrt(D*D/4-h*h*Math.cos(i)*Math.cos(i))));
+                }
+                else {
+                    S_D.add((float) (h+D*hi*Math.sqrt(1/(4*hi*hi*Math.pow(Math.cos(i), 2)+D*D*
+                            Math.pow(Math.sin(i), 2)))));
+                }
+            }
+            else {
+                S_D.add((float) (D/2/Math.cos(Math.PI-i)));
+            }
+        }
+    }
+
+    public float getDistanceFromPosition(int position) {
+        return S_D.get(position);
     }
 
     @Override
